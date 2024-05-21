@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+//https://free-game-assets.itch.io/free-field-enemies-pixel-art-for-tower-defense
+//https://free-game-assets.itch.io/free-archer-towers-pixel-art-for-tower-defense
+
 namespace TowerDefense
 {
     public class Game1 : Game
