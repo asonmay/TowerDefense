@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 //https://free-game-assets.itch.io/free-field-enemies-pixel-art-for-tower-defense
 //https://free-game-assets.itch.io/free-archer-towers-pixel-art-for-tower-defense
@@ -11,6 +12,10 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+
+        private Tilemap test;
+        private Dictionary<PathTileType, Rectangle> sourceRectangles;
+        private Texture2D texture;
 
         public Game1()
         {
@@ -27,6 +32,31 @@ namespace TowerDefense
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            texture = Content.Load<Texture2D>("FieldsTileset");
+            sourceRectangles = new Dictionary<PathTileType, Rectangle>
+            {
+                [PathTileType.None] = new Rectangle(160, 128, 32, 32),
+                [PathTileType.Center] = new Rectangle(64, 64, 32, 32),
+                [PathTileType.Right] = new Rectangle(0, 32, 32, 32),
+                [PathTileType.Left] = new Rectangle(128, 32, 32, 32),
+            };
+            test = new Tilemap(new Point(8,8), new Point(48,48), getBlankMap(new Point(8,8)), Vector2.Zero, sourceRectangles,texture);
+        }
+
+        private PathTileType[,] getBlankMap(Point size)
+        {
+            PathTileType[,] map = new PathTileType[size.X, size.Y];
+
+            for(int x = 0; x < size.X; x++)
+            {
+                for(int y = 0; y < size.Y; y++)
+                {
+                    map[x, y] = PathTileType.None;
+                }
+            }
+
+            return map;
         }
 
         protected override void Update(GameTime gameTime)
@@ -40,6 +70,11 @@ namespace TowerDefense
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
+
+            test.Draw(spriteBatch);
+
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }

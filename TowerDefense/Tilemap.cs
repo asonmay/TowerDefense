@@ -17,11 +17,13 @@ namespace TowerDefense
         private Texture2D spriteSheet;
         private Dictionary<PathTileType, Rectangle> sourceRectangles;
 
-        public Tilemap(Point size, Point tileSize, PathTileType[,] TileTypes, Vector2 mapPosition)
+        public Tilemap(Point size, Point tileSize, PathTileType[,] TileTypes, Vector2 mapPosition, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet)
         {
             this.size = size;
             this.tileSize = tileSize;
             this.mapPosition = mapPosition;
+            this.sourceRectangles = sourceRectangles;
+            this.spriteSheet = spriteSheet;
 
             setTileMap(TileTypes);
             setNeighbors(TileTypes);
@@ -29,9 +31,9 @@ namespace TowerDefense
 
         private void setNeighbors(PathTileType[,] TileTypes)
         {
-            for (int x = 0; x < TileTypes.Length; x++)
+            for (int x = 0; x < TileTypes.GetLength(0); x++)
             {
-                for (int y = 0; y < TileTypes.Length; y++)
+                for (int y = 0; y < TileTypes.GetLength(1); y++)
                 {
                     if (tiles[x, y] is PathTile)
                     {
@@ -81,13 +83,25 @@ namespace TowerDefense
         private void setTile(Point pos, PathTileType[,] TileTypes)
         {
             Vector2 position = new Vector2(mapPosition.X + pos.X * tileSize.X, mapPosition.Y + pos.Y * tileSize.Y);
+            float scale = (float)tileSize.X / sourceRectangles[PathTileType.None].Width;
             if (TileTypes[pos.X, pos.Y] == PathTileType.None)
             {
-                tiles[pos.X, pos.Y] = new Tile(position, Color.White, 1, 0, sourceRectangles[PathTileType.None], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y));
+                tiles[pos.X, pos.Y] = new Tile(position, Color.White, scale, 0, sourceRectangles[PathTileType.None], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y));
             }
             else
             {
-                tiles[pos.X, pos.Y] = new PathTile(position, Color.White, 1, 0, sourceRectangles[TileTypes[pos.X, pos.Y]], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y), TileTypes[pos.X, pos.Y]);
+                tiles[pos.X, pos.Y] = new PathTile(position, Color.White, scale, 0, sourceRectangles[TileTypes[pos.X, pos.Y]], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y), TileTypes[pos.X, pos.Y]);
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            for(int x = 0; x < size.X; x++)
+            {
+                for(int y = 0; y < size.Y; y++)
+                {
+                    tiles[x, y].Draw(spriteBatch);
+                }
             }
         }
     }
