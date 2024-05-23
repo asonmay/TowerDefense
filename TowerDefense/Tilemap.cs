@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace TowerDefense
         private Vector2 mapPosition;
         private Texture2D spriteSheet;
         private Dictionary<PathTileType, Rectangle> sourceRectangles;
+        private Point mouseHoverPos;
 
         public Tilemap(Point size, Point tileSize, PathTileType[,] TileTypes, Vector2 mapPosition, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet)
         {
@@ -94,12 +96,40 @@ namespace TowerDefense
             }
         }
 
+        public void UpdateMouse()
+        {
+            Point mousePos = Mouse.GetState().Position;
+            Rectangle mouseHitbox = new Rectangle(mousePos, new Point(1, 1));
+
+            mouseHoverPos = new Point(200, 200);
+            for (int x = 0; x < size.X; x++)
+            {
+                for(int y = 0; y < size.Y; y++)
+                {
+                    Rectangle tileHitbox = new Rectangle(tiles[x, y].position.ToPoint(), tileSize);
+                    if (mouseHitbox.Intersects(tileHitbox))
+                    {
+                        mouseHoverPos = new Point(x, y);
+                    }
+                }
+            }
+        }
+
+        public void Update()
+        {
+
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             for(int x = 0; x < size.X; x++)
             {
                 for(int y = 0; y < size.Y; y++)
                 {
+                    if(new Point(x,y) == mouseHoverPos)
+                    {
+
+                    }
                     tiles[x, y].Draw(spriteBatch);
                 }
             }

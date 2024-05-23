@@ -10,7 +10,7 @@ namespace TowerDefense
 {
     public abstract class Sprite
     {
-        private Vector2 position;
+        public Vector2 position;
         private Color color;
         private float scale;
         private int rotation;

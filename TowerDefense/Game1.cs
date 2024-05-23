@@ -13,10 +13,10 @@ namespace TowerDefense
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private Tilemap test;
+        private Tilemap mapEditor;
         private Dictionary<PathTileType, Rectangle> sourceRectangles;
         private Texture2D texture;
-
+        private PathTileType[,] tileType;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,7 +41,9 @@ namespace TowerDefense
                 [PathTileType.Right] = new Rectangle(0, 32, 32, 32),
                 [PathTileType.Left] = new Rectangle(128, 32, 32, 32),
             };
-            test = new Tilemap(new Point(8,8), new Point(48,48), getBlankMap(new Point(8,8)), Vector2.Zero, sourceRectangles,texture);
+
+            tileType = getBlankMap(new Point(8, 8));
+            mapEditor = new Tilemap(new Point(8,8), new Point(48,48), tileType, Vector2.Zero, sourceRectangles,texture);
         }
 
         private PathTileType[,] getBlankMap(Point size)
