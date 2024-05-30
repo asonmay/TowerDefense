@@ -64,12 +64,12 @@ namespace TowerDefense
 
             if(Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                if(palletHovorPos.X > 0)
+                if(palletHovorPos.X >= 0)
                 {
                     selectedType = palletTileTypes[palletHovorPos.X, palletHovorPos.Y];
                 }
 
-                if(mapHovorPos.X > 0)
+                if(mapHovorPos.X >= 0)
                 {
                     tileTypes[mapHovorPos.X, mapHovorPos.Y] = selectedType;
                 }
