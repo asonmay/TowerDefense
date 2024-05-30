@@ -17,6 +17,13 @@ namespace TowerDefense
         private Rectangle sourceRectangle;
         private Vector2 origin;
         private Texture2D texture;
+        public Rectangle Hitbox
+        {
+            get
+            {
+                return new Rectangle((int)position.X, (int)position.Y, (int)(sourceRectangle.Width * scale), (int)(sourceRectangle.Height * scale));
+            }
+        }
 
         public Sprite(Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture)
         {

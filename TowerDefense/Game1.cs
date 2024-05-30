@@ -13,10 +13,7 @@ namespace TowerDefense
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private Tilemap mapEditor;
-        private Dictionary<PathTileType, Rectangle> sourceRectangles;
-        private Texture2D texture;
-        private PathTileType[,] tileType;
+        private Screen screen;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -27,38 +24,31 @@ namespace TowerDefense
         protected override void Initialize()
         {
             base.Initialize();
+            graphics.PreferredBackBufferWidth = 796;
+            graphics.PreferredBackBufferHeight = 660;
+            graphics.ApplyChanges();
         }
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);            
 
-            texture = Content.Load<Texture2D>("FieldsTileset");
-            sourceRectangles = new Dictionary<PathTileType, Rectangle>
+            Texture2D texture = Content.Load<Texture2D>("FieldsTileset");
+            Dictionary<PathTileType, Rectangle>  sourceRectangles = new Dictionary<PathTileType, Rectangle>
             {
                 [PathTileType.None] = new Rectangle(160, 128, 32, 32),
                 [PathTileType.Center] = new Rectangle(64, 64, 32, 32),
                 [PathTileType.Right] = new Rectangle(0, 32, 32, 32),
                 [PathTileType.Left] = new Rectangle(128, 32, 32, 32),
+                [PathTileType.LeftUp] = new Rectangle(32, 32, 32, 32),
+                [PathTileType.RightUp] = new Rectangle(96, 32, 32, 32),
+                [PathTileType.LeftDown] = new Rectangle(32, 96, 32, 32),
+                [PathTileType.RightDown] = new Rectangle(96, 96, 32, 32),
+                [PathTileType.Up] = new Rectangle(64, 128, 32, 32),
+                [PathTileType.Down] = new Rectangle(64, 0, 32, 32),
             };
 
-            tileType = getBlankMap(new Point(8, 8));
-            mapEditor = new Tilemap(new Point(8,8), new Point(48,48), tileType, Vector2.Zero, sourceRectangles,texture);
-        }
-
-        private PathTileType[,] getBlankMap(Point size)
-        {
-            PathTileType[,] map = new PathTileType[size.X, size.Y];
-
-            for(int x = 0; x < size.X; x++)
-            {
-                for(int y = 0; y < size.Y; y++)
-                {
-                    map[x, y] = PathTileType.None;
-                }
-            }
-
-            return map;
+            screen = new MapEditor(new Vector2(20,64), new Point(20,18), new Point(32,32), sourceRectangles, texture, new Point(796, 650), new Vector2(680, 64));
         }
 
         protected override void Update(GameTime gameTime)
@@ -66,15 +56,17 @@ namespace TowerDefense
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            screen.Update();
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
-            test.Draw(spriteBatch);
+            screen.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +12,18 @@ namespace TowerDefense
 {
     public class Tilemap
     {
-        private Point size;
-        private Point tileSize;
-        private Tile[,] tiles;
+        public Point Size;
+        public Point TileSize;
+        public Tile[,] Tiles;
         private Vector2 mapPosition;
         private Texture2D spriteSheet;
         private Dictionary<PathTileType, Rectangle> sourceRectangles;
-        private Point mouseHoverPos;
+        public Point MouseHoverPos;
 
         public Tilemap(Point size, Point tileSize, PathTileType[,] TileTypes, Vector2 mapPosition, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet)
         {
-            this.size = size;
-            this.tileSize = tileSize;
+            Size = size;
+            TileSize = tileSize;
             this.mapPosition = mapPosition;
             this.sourceRectangles = sourceRectangles;
             this.spriteSheet = spriteSheet;
@@ -37,9 +38,9 @@ namespace TowerDefense
             {
                 for (int y = 0; y < TileTypes.GetLength(1); y++)
                 {
-                    if (tiles[x, y] is PathTile)
+                    if (Tiles[x, y] is PathTile)
                     {
-                        PathTile temp = (PathTile)tiles[x, y];
+                        PathTile temp = (PathTile)Tiles[x, y];
                         temp.neighbors = getNeighbors(new Point(x, y), TileTypes);
                     }
                 }
@@ -50,21 +51,21 @@ namespace TowerDefense
         {
             List<PathTile> neighbors = new List<PathTile>();
 
-            if(pos.X + 1 < size.X && TileTypes[pos.X + 1, pos.Y] != PathTileType.None)
+            if(pos.X + 1 < Size.X && TileTypes[pos.X + 1, pos.Y] != PathTileType.None)
             {
-                neighbors.Add((PathTile)tiles[pos.X + 1, pos.Y]);
+                neighbors.Add((PathTile)Tiles[pos.X + 1, pos.Y]);
             }
             if (pos.X - 1 > 0 && TileTypes[pos.X - 1, pos.Y] != PathTileType.None)
             {
-                neighbors.Add((PathTile)tiles[pos.X - 1, pos.Y]);
+                neighbors.Add((PathTile)Tiles[pos.X - 1, pos.Y]);
             }
-            if (pos.Y + 1 < size.Y && TileTypes[pos.X, pos.Y + 1] != PathTileType.None)
+            if (pos.Y + 1 < Size.Y && TileTypes[pos.X, pos.Y + 1] != PathTileType.None)
             {
-                neighbors.Add((PathTile)tiles[pos.X, pos.Y + 1]);
+                neighbors.Add((PathTile)Tiles[pos.X, pos.Y + 1]);
             }
             if (pos.Y - 1 > 0 && TileTypes[pos.X, pos.Y - 1] != PathTileType.None)
             {
-                neighbors.Add((PathTile)tiles[pos.X, pos.Y - 1]);
+                neighbors.Add((PathTile)Tiles[pos.X, pos.Y - 1]);
             }
 
             return neighbors.ToArray();         
@@ -72,10 +73,10 @@ namespace TowerDefense
 
         private void setTileMap(PathTileType[,] TileTypes)
         {
-            tiles = new Tile[size.X, size.Y];
-            for (int x = 0; x < size.X; x++)
+            Tiles = new Tile[Size.X, Size.Y];
+            for (int x = 0; x < Size.X; x++)
             {
-                for (int y = 0; y < size.Y; y++)
+                for (int y = 0; y < Size.Y; y++)
                 {
                     setTile(new Point(x,y), TileTypes);
                 }
@@ -84,15 +85,15 @@ namespace TowerDefense
 
         private void setTile(Point pos, PathTileType[,] TileTypes)
         {
-            Vector2 position = new Vector2(mapPosition.X + pos.X * tileSize.X, mapPosition.Y + pos.Y * tileSize.Y);
-            float scale = (float)tileSize.X / sourceRectangles[PathTileType.None].Width;
+            Vector2 position = new Vector2(mapPosition.X + pos.X * TileSize.X, mapPosition.Y + pos.Y * TileSize.Y);
+            float scale = (float)TileSize.X / sourceRectangles[PathTileType.None].Width;
             if (TileTypes[pos.X, pos.Y] == PathTileType.None)
             {
-                tiles[pos.X, pos.Y] = new Tile(position, Color.White, scale, 0, sourceRectangles[PathTileType.None], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y));
+                Tiles[pos.X, pos.Y] = new Tile(position, Color.White, scale, 0, sourceRectangles[PathTileType.None], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y));
             }
             else
             {
-                tiles[pos.X, pos.Y] = new PathTile(position, Color.White, scale, 0, sourceRectangles[TileTypes[pos.X, pos.Y]], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y), TileTypes[pos.X, pos.Y]);
+                Tiles[pos.X, pos.Y] = new PathTile(position, Color.White, scale, 0, sourceRectangles[TileTypes[pos.X, pos.Y]], Vector2.Zero, spriteSheet, new Point(pos.X, pos.Y), TileTypes[pos.X, pos.Y]);
             }
         }
 
@@ -101,15 +102,15 @@ namespace TowerDefense
             Point mousePos = Mouse.GetState().Position;
             Rectangle mouseHitbox = new Rectangle(mousePos, new Point(1, 1));
 
-            mouseHoverPos = new Point(200, 200);
-            for (int x = 0; x < size.X; x++)
+            MouseHoverPos = new Point(200, 200);
+            for (int x = 0; x < Size.X; x++)
             {
-                for(int y = 0; y < size.Y; y++)
+                for(int y = 0; y < Size.Y; y++)
                 {
-                    Rectangle tileHitbox = new Rectangle(tiles[x, y].position.ToPoint(), tileSize);
+                    Rectangle tileHitbox = new Rectangle(Tiles[x, y].position.ToPoint(), TileSize);
                     if (mouseHitbox.Intersects(tileHitbox))
                     {
-                        mouseHoverPos = new Point(x, y);
+                        MouseHoverPos = new Point(x, y);
                     }
                 }
             }
@@ -122,15 +123,15 @@ namespace TowerDefense
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for(int x = 0; x < size.X; x++)
+            for(int x = 0; x < Size.X; x++)
             {
-                for(int y = 0; y < size.Y; y++)
+                for(int y = 0; y < Size.Y; y++)
                 {
-                    if(new Point(x,y) == mouseHoverPos)
+                    Tiles[x, y].Draw(spriteBatch);
+                    if (new Point(x, y) == MouseHoverPos)
                     {
-
+                        spriteBatch.DrawRectangle(Tiles[x, y].Hitbox, Color.Red, 4);
                     }
-                    tiles[x, y].Draw(spriteBatch);
                 }
             }
         }
