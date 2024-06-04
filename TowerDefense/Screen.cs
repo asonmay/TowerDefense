@@ -9,6 +9,16 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
+    public enum ScreenTypes
+    {
+        Home,
+        MapEditor,
+        Game,
+        Leaderboard,
+        PlayMenu,
+        MapEditorMenu
+    }
+
     public abstract class Screen
     {
         public bool IsClicked(Rectangle rect)
@@ -35,7 +45,7 @@ namespace TowerDefense
             return false;
         }
 
-        public abstract void Update();
+        public abstract ScreenTypes Update();
 
         public abstract void Draw(SpriteBatch spriteBatch);
     }

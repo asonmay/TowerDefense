@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TowerDefense
@@ -14,18 +16,16 @@ namespace TowerDefense
     public class MapEditor : Screen
     {
         private Point screenSize;
-      
         private PathTileType[,] tileTypes;
         private TileMapSpecs specs;
         private Point mapHovorPos;
-
         private PathTileType[,] palletTileTypes;
         private TileMapSpecs palletSpecs;
         private Point palletHovorPos;
-
         private PathTileType selectedType;
+        private Button exitButton;
 
-        public MapEditor(Vector2 mapPos, Point size, Point tileSize, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet, Point screenSize, Vector2 canvasPos)
+        public MapEditor(Vector2 mapPos, Point size, Point tileSize, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet, Point screenSize, Vector2 canvasPos, SpriteFont font, Point saveButtonPos)
         {
             tileTypes = new PathTileType[size.X, size.Y];
             specs = new TileMapSpecs(size, tileSize, mapPos, spriteSheet, sourceRectangles);
@@ -39,6 +39,7 @@ namespace TowerDefense
             };
 
             palletSpecs = new TileMapSpecs(new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), tileSize, canvasPos, spriteSheet, sourceRectangles);
+            exitButton = new Button(Color.Red, "exit", saveButtonPos, font, Color.Black);
         }
 
         private Point getHoveredTile(TileMapSpecs map)
@@ -57,23 +58,33 @@ namespace TowerDefense
             return new Point(-1,-1);
         }
 
-        public override void Update()
+        public override ScreenTypes Update()
         {
             mapHovorPos = getHoveredTile(specs);
             palletHovorPos = getHoveredTile(palletSpecs);
 
-            if(Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                if(palletHovorPos.X >= 0)
+                if (palletHovorPos.X >= 0)
                 {
                     selectedType = palletTileTypes[palletHovorPos.X, palletHovorPos.Y];
                 }
 
-                if(mapHovorPos.X >= 0)
+                if (mapHovorPos.X >= 0)
                 {
                     tileTypes[mapHovorPos.X, mapHovorPos.Y] = selectedType;
                 }
             }
+            return GetScreenToSwitch();
+        }
+
+        public ScreenTypes GetScreenToSwitch()
+        {
+            if(exitButton.isClicked())
+            {
+                return ScreenTypes.MapEditorMenu;
+            }
+            return ScreenTypes.MapEditor;
         }
 
         private void DrawMap(TileMapSpecs specs, PathTileType[,] types, SpriteBatch sp, Point hovorPos)

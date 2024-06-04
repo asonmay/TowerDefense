@@ -10,6 +10,20 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
+    public struct TileMapProfile
+    {
+        private PathTileType[,] tileTypes;
+        private TileMapSpecs specs;
+        public string name;
+        
+        public TileMapProfile(PathTileType[,] tileTypes, TileMapSpecs specs, string name)
+        {
+            this.tileTypes = tileTypes;
+            this.specs = specs;
+            this.name = name;
+        }
+    }
+
     public struct TileMapSpecs
     {
         public Point Size;

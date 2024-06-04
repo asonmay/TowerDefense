@@ -12,8 +12,8 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-
         private Screen screen;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -31,8 +31,9 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);            
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            SpriteFont buttonFont = Content.Load<SpriteFont>("ButtonFont");
             Texture2D texture = Content.Load<Texture2D>("FieldsTileset");
             Dictionary<PathTileType, Rectangle>  sourceRectangles = new Dictionary<PathTileType, Rectangle>
             {
@@ -48,7 +49,7 @@ namespace TowerDefense
                 [PathTileType.Down] = new Rectangle(64, 0, 32, 32),
             };
 
-            screen = new MapEditor(new Vector2(20,64), new Point(20,18), new Point(32,32), sourceRectangles, texture, new Point(796, 650), new Vector2(680, 64));
+            screen = new MapEditor(new Vector2(20,64), new Point(20,18), new Point(32,32), sourceRectangles, texture, new Point(796, 650), new Vector2(680, 64), buttonFont, new Point(650,600));
         }
 
         protected override void Update(GameTime gameTime)
