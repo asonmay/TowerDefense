@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 //https://free-game-assets.itch.io/free-field-enemies-pixel-art-for-tower-defense
@@ -12,7 +13,8 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private Screen screen;
+
+        private ScreenManager screen;
 
         public Game1()
         {
@@ -33,8 +35,11 @@ namespace TowerDefense
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            screen = ScreenManager.Instance;
+
             SpriteFont buttonFont = Content.Load<SpriteFont>("ButtonFont");
-            Texture2D texture = Content.Load<Texture2D>("FieldsTileset");
+            Texture2D spriteSheet = Content.Load<Texture2D>("FieldsTileset");
+
             Dictionary<PathTileType, Rectangle>  sourceRectangles = new Dictionary<PathTileType, Rectangle>
             {
                 [PathTileType.None] = new Rectangle(160, 128, 32, 32),
@@ -49,7 +54,12 @@ namespace TowerDefense
                 [PathTileType.Down] = new Rectangle(64, 0, 32, 32),
             };
 
-            screen = new MapEditor(new Vector2(20,64), new Point(20,18), new Point(32,32), sourceRectangles, texture, new Point(796, 650), new Vector2(680, 64), buttonFont, new Point(650,600));
+            Texture2D background = Content.Load<Texture2D>("another zanlin");
+            screen = new HomeScreen(background, new Point(100, 100), new Point(200, 100), Color.Red, Color.Red, buttonFont);
+
+            TileMapProfile savedMaps = new TileMapProfile[0];
+
+            screen.Initilize(screen, spriteFont, spriteSheet, sourceRectangles, savedMaps, background);
         }
 
         protected override void Update(GameTime gameTime)
@@ -57,7 +67,7 @@ namespace TowerDefense
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            screen.Update();
+
 
             base.Update(gameTime);
         }

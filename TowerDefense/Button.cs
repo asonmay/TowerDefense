@@ -5,7 +5,6 @@ using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace TowerDefense
 
         public Button( Color color, string text, Point position, SpriteFont font, Color textColor)
         {
-            size = font.MeasureString(text).ToPoint();
+            size = new Point((int)font.MeasureString(text).X + 10, (int)font.MeasureString(text).Y + 10);
             this.color = color;
             this.text = text;
             this.position = position;
@@ -33,14 +32,14 @@ namespace TowerDefense
         public bool isClicked()
         {
             Rectangle mouseHitbox = new Rectangle(Mouse.GetState().Position, new Point(1, 1));
-            bool isClicked = mouseHitbox.Intersects(new Rectangle(position, size));
+            bool isClicked = mouseHitbox.Intersects(new Rectangle(position, size)) && Mouse.GetState().LeftButton == ButtonState.Pressed;
             return isClicked;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.FillRectangle(new Rectangle(position, size), color);
-            spriteBatch.DrawString(font, text, position.ToVector2(), textColor);
+            spriteBatch.DrawString(font, text, new Vector2(position.X + 5, position.Y + 5), textColor);
         }
     }
 }

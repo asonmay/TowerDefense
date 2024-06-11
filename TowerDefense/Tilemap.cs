@@ -12,8 +12,8 @@ namespace TowerDefense
 {
     public struct TileMapProfile
     {
-        private PathTileType[,] tileTypes;
-        private TileMapSpecs specs;
+        public PathTileType[,] tileTypes;
+        public TileMapSpecs specs;
         public string name;
         
         public TileMapProfile(PathTileType[,] tileTypes, TileMapSpecs specs, string name)

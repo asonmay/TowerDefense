@@ -9,18 +9,14 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
-    public enum ScreenTypes
-    {
-        Home,
-        MapEditor,
-        Game,
-        Leaderboard,
-        PlayMenu,
-        MapEditorMenu
-    }
-
     public abstract class Screen
     {
+        protected SpriteFont buttonFont;
+        protected Texture2D spriteSheet;
+        protected Dictionary<PathTileType, Rectangle> sourceRectangles;
+        protected TileMapProfile[] savedMaps;
+        protected Texture2D background;
+
         public bool IsClicked(Rectangle rect)
         {
             bool isMouseClicked = Mouse.GetState().LeftButton == ButtonState.Pressed;
@@ -45,7 +41,7 @@ namespace TowerDefense
             return false;
         }
 
-        public abstract ScreenTypes Update();
+        public abstract Type Update();
 
         public abstract void Draw(SpriteBatch spriteBatch);
     }
