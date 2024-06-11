@@ -11,11 +11,11 @@ namespace TowerDefense
 {
     public abstract class Screen
     {
-        protected SpriteFont buttonFont;
-        protected Texture2D spriteSheet;
-        protected Dictionary<PathTileType, Rectangle> sourceRectangles;
-        protected TileMapProfile[] savedMaps;
-        protected Texture2D background;
+        public SpriteFont buttonFont;
+        public Texture2D spriteSheet;
+        public Dictionary<PathTileType, Rectangle> sourceRectangles;
+        public TileMapProfile[] savedMaps;
+        public Texture2D background;
 
         public bool IsClicked(Rectangle rect)
         {
@@ -41,7 +41,7 @@ namespace TowerDefense
             return false;
         }
 
-        public abstract Type Update();
+        public abstract ScreenTypes Update();
 
         public abstract void Draw(SpriteBatch spriteBatch);
     }

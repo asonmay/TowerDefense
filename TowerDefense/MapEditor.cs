@@ -26,10 +26,8 @@ namespace TowerDefense
         private Button exitButton;
         private TextBox nameTextBox;
 
-        public MapEditor(TileMapProfile profile, Vector2 canvasPos, SpriteFont font, Point saveButtonPos, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, TileMapProfile[] savedMaps, Texture2D background)
+        public MapEditor(Vector2 canvasPos, SpriteFont font, Point saveButtonPos, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, TileMapProfile[] savedMaps, Texture2D background)
         {
-            this.profile = profile;
-
             palletTileTypes = new PathTileType[,]
             {
                 { PathTileType.LeftUp, PathTileType.Left, PathTileType.LeftDown, PathTileType.None },
@@ -45,6 +43,11 @@ namespace TowerDefense
             this.savedMaps = savedMaps;
             this.background = background;
             //nameTextBox = new TextBox(new Rectangle(100, 10, 100, 50));
+        }
+
+        public void Initialize(TileMapProfile profile)
+        {
+            this.profile = profile;
         }
 
         private Point getHoveredTile(TileMapSpecs map)
@@ -63,7 +66,7 @@ namespace TowerDefense
             return new Point(-1,-1);
         }
 
-        public override Type Update()
+        public override ScreenTypes Update()
         {
             mapHovorPos = getHoveredTile(profile.specs);
             palletHovorPos = getHoveredTile(palletSpecs);
@@ -85,13 +88,13 @@ namespace TowerDefense
             return GetScreenToSwitch();
         }
 
-        public Type GetScreenToSwitch()
+        public ScreenTypes GetScreenToSwitch()
         {
             if(exitButton.isClicked())
             {
-                return typeof(MapEditorMenu);
+                return ScreenTypes.MapEditorMenu;
             }
-            return typeof(MapEditor);
+            return ScreenTypes.MapEditor;
         }
 
         private void DrawMap(TileMapSpecs specs, PathTileType[,] types, SpriteBatch sp, Point hovorPos)

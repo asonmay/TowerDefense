@@ -55,25 +55,25 @@ namespace TowerDefense
             newFileButton.Draw(spriteBatch);
         }
 
-        public override Type Update()
+        public override ScreenTypes Update()
         {
             for(int i = 0; i < mapFiles.Length; i++)
             {
                 if (mapFiles[i].editButton.isClicked())
                 {
                     SelectedMap = mapFiles[i].profile;
-                    return typeof(MapEditor);
+                    return ScreenTypes.MapEditor;
                 }
             }
             if(newFileButton.isClicked())
             {
-                return typeof(MapEditor);
+                return ScreenTypes.MapEditor;
             }
             if (homeButton.isClicked())
             {
-                return typeof(HomeScreen);
+                return ScreenTypes.HomeScreen;
             }
-            return typeof(MapEditorMenu);
+            return ScreenTypes.MapEditorMenu;
         }
     }
 }

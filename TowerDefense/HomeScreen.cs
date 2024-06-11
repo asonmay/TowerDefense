@@ -35,22 +35,22 @@ namespace TowerDefense
             mapEditorButton.Draw(spriteBatch);
         }
 
-        public override Type Update()
+        public override ScreenTypes Update()
         {
             return GetScreenToSwitch();
         }
 
-        public Type GetScreenToSwitch()
+        public ScreenTypes GetScreenToSwitch()
         {
             if (playButton.isClicked())
             {
-              //  return typeof(PlayMenu);
+
             }
             else if(mapEditorButton.isClicked())
             {
-                return typeof(MapEditorMenu);
+                return ScreenTypes.MapEditorMenu;
             }
-            return typeof(HomeScreen);
+            return ScreenTypes.MapEditorMenu;
         }
     }
 }

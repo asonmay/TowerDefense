@@ -13,7 +13,7 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-
+        private TileMapProfile selectedMap;
         private ScreenManager screen;
 
         public Game1()
@@ -40,7 +40,7 @@ namespace TowerDefense
             SpriteFont buttonFont = Content.Load<SpriteFont>("ButtonFont");
             Texture2D spriteSheet = Content.Load<Texture2D>("FieldsTileset");
 
-            Dictionary<PathTileType, Rectangle>  sourceRectangles = new Dictionary<PathTileType, Rectangle>
+            Dictionary<PathTileType, Rectangle> sourceRectangles = new Dictionary<PathTileType, Rectangle>
             {
                 [PathTileType.None] = new Rectangle(160, 128, 32, 32),
                 [PathTileType.Center] = new Rectangle(64, 64, 32, 32),
@@ -55,11 +55,22 @@ namespace TowerDefense
             };
 
             Texture2D background = Content.Load<Texture2D>("another zanlin");
-            screen = new HomeScreen(background, new Point(100, 100), new Point(200, 100), Color.Red, Color.Red, buttonFont);
 
-            TileMapProfile savedMaps = new TileMapProfile[0];
+            TileMapProfile[] savedMaps = new TileMapProfile[0];
+            MapEditorMenuItem[] items = new MapEditorMenuItem[savedMaps.Length];
+            for (int i = 0; i < items.Length; i++)
+            {
+                items[i] = new MapEditorMenuItem(savedMaps[i], new Point(380, 50), Color.Black, buttonFont, new Point(10, 20), new Point(100, 20));
+            }
 
-            screen.Initilize(screen, spriteFont, spriteSheet, sourceRectangles, savedMaps, background);
+            Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
+            {
+                [ScreenTypes.HomeScreen] = new HomeScreen(background, new Point(100, 100), new Point(200, 100), Color.Red, Color.Red, buttonFont, spriteSheet, sourceRectangles, savedMaps, background),
+                [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, items, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
+                [ScreenTypes.MapEditor] = new MapEditor()
+            };
+
+            screen.Initilize(screens);
         }
 
         protected override void Update(GameTime gameTime)
