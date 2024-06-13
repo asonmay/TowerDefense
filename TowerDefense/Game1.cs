@@ -13,8 +13,10 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private TileMapProfile selectedMap;
         private ScreenManager screen;
+        private List<TileMapProfile> savedMaps;
+        private List<MapEditorMenuItem> items;
+        private SpriteFont buttonFont;
 
         public Game1()
         {
@@ -36,8 +38,8 @@ namespace TowerDefense
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             screen = ScreenManager.Instance;
+            buttonFont = Content.Load<SpriteFont>("ButtonFont");
 
-            SpriteFont buttonFont = Content.Load<SpriteFont>("ButtonFont");
             Texture2D spriteSheet = Content.Load<Texture2D>("FieldsTileset");
 
             Dictionary<PathTileType, Rectangle> sourceRectangles = new Dictionary<PathTileType, Rectangle>
@@ -55,22 +57,30 @@ namespace TowerDefense
             };
 
             Texture2D background = Content.Load<Texture2D>("another zanlin");
+            SpriteFont titleFont = Content.Load<SpriteFont>("TitleFont");
 
-            TileMapProfile[] savedMaps = new TileMapProfile[0];
-            MapEditorMenuItem[] items = new MapEditorMenuItem[savedMaps.Length];
-            for (int i = 0; i < items.Length; i++)
-            {
-                items[i] = new MapEditorMenuItem(savedMaps[i], new Point(380, 50), Color.Black, buttonFont, new Point(10, 20), new Point(100, 20));
-            }
+            savedMaps = new List<TileMapProfile>();
+            UpdateSavedMaps(savedMaps);
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
             {
-                [ScreenTypes.HomeScreen] = new HomeScreen(background, new Point(100, 100), new Point(200, 100), Color.Red, Color.Red, buttonFont, spriteSheet, sourceRectangles, savedMaps, background),
-                [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, items, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
-                [ScreenTypes.MapEditor] = new MapEditor()
+                [ScreenTypes.HomeScreen] = new HomeScreen(background, new Point(100, 500), new Point(200, 500), Color.Red, Color.Red, buttonFont, background, titleFont, GraphicsDevice.Viewport),
+                [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
+                [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32,10), spriteSheet, sourceRectangles, background)
             };
 
             screen.Initilize(screens);
+        }
+
+        public List<MapEditorMenuItem> UpdateSavedMaps(List<TileMapProfile> profiles)
+        {
+            List<MapEditorMenuItem> temp = new List<MapEditorMenuItem>();
+            for (int i = 0; i < temp.Count; i++)
+            {
+                temp.Add(new MapEditorMenuItem(profiles[i], new Point(380, 50), Color.Black, buttonFont, new Point(10, 20), new Point(100, 20)));
+            }
+            savedMaps = profiles;
+            return temp;
         }
 
         protected override void Update(GameTime gameTime)
@@ -78,7 +88,7 @@ namespace TowerDefense
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
+            screen.Update(savedMaps);
 
             base.Update(gameTime);
         }

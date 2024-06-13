@@ -17,28 +17,37 @@ namespace TowerDefense
         private MapEditorMenuItem[] mapFiles;
         private Button homeButton;
         private Point mapFileOffests;
+        public TileMapProfile[] savedMaps;
         private Button newFileButton;
         public TileMapProfile SelectedMap;
         private Texture2D background;
 
-        public MapEditorMenu(Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, MapEditorMenuItem[] mapFiles, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Point newButtonPos, Texture2D background)
+        public MapEditorMenu(Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Point newButtonPos, Texture2D background)
         {
-            TileMapSpecs defultSpecs = new TileMapSpecs(new Point(20,18), new Point(32,32), new Vector2(20, 64), spriteSheet, sourceRectangles);
+            TileMapSpecs defultSpecs = new TileMapSpecs(new Point(32,32), spriteSheet, sourceRectangles);
             PathTileType[,] defaultTileTypes = new PathTileType[20,18];
-            SelectedMap = new TileMapProfile(defaultTileTypes, defultSpecs, "Map1");
+            SelectedMap = new TileMapProfile(defaultTileTypes, defultSpecs, "Map1", new Point(20, 18), new Vector2(20, 64));
 
             this.listColor = listColor;
             this.listRect = listRect;
-            this.mapFiles = mapFiles;
             this.mapFileOffests = mapFileOffests;
-
+            this.buttonFont = buttonFont;
             homeButton = new Button(Color.Red, "Home", homeButtonPos, buttonFont, Color.Black);
             newFileButton = new Button(Color.Red, "New Map", newButtonPos, buttonFont, Color.Black);
             this.background = background;
 
             this.spriteSheet = spriteSheet;
             this.sourceRectangles = sourceRectangles;
-            this.background = background;
+        }
+
+        public void Initalize(MapEditorMenuItem[] profiles)
+        {
+            mapFiles = profiles;
+        }
+
+        public override ScreenTypes ReturnType()
+        {
+            return ScreenTypes.MapEditorMenu;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

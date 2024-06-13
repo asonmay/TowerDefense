@@ -14,8 +14,8 @@ namespace TowerDefense
         public SpriteFont buttonFont;
         public Texture2D spriteSheet;
         public Dictionary<PathTileType, Rectangle> sourceRectangles;
-        public TileMapProfile[] savedMaps;
         public Texture2D background;
+        public Viewport viewPort;
 
         public bool IsClicked(Rectangle rect)
         {
@@ -40,6 +40,8 @@ namespace TowerDefense
 
             return false;
         }
+
+        public abstract ScreenTypes ReturnType();
 
         public abstract ScreenTypes Update();
 

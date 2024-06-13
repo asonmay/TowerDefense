@@ -15,28 +15,28 @@ namespace TowerDefense
         public PathTileType[,] tileTypes;
         public TileMapSpecs specs;
         public string name;
-        
-        public TileMapProfile(PathTileType[,] tileTypes, TileMapSpecs specs, string name)
+        public Point Size;
+        public Vector2 MapPosition;
+
+        public TileMapProfile(PathTileType[,] tileTypes, TileMapSpecs specs, string name, Point size, Vector2 mapPosition)
         {
             this.tileTypes = tileTypes;
             this.specs = specs;
             this.name = name;
+            Size = size;
+            MapPosition = mapPosition;
         }
     }
 
     public struct TileMapSpecs
-    {
-        public Point Size;
+    {       
         public Point TileSize;
-        public Vector2 MapPosition;
         public Texture2D SpriteSheet;
         public Dictionary<PathTileType, Rectangle> SourceRectangles;
 
-        public TileMapSpecs(Point size, Point tileSize, Vector2 mapPosition, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangle)
+        public TileMapSpecs(Point tileSize, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangle)
         {
-            Size = size;
             TileSize = tileSize;
-            MapPosition = mapPosition;
             SpriteSheet = spriteSheet;
             SourceRectangles = sourceRectangle;
         }
@@ -46,13 +46,17 @@ namespace TowerDefense
     public class Tilemap
     {
         public TileMapSpecs Specs;
+        public Vector2 mapPosition;
+        public Point size;
         public Tile[,] Tiles;
 
         public Tilemap(Point size, Point tileSize, PathTileType[,] TileTypes, Vector2 mapPosition, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet)
         {
-            Specs = new TileMapSpecs(size, tileSize, mapPosition, spriteSheet, sourceRectangles);
+            Specs = new TileMapSpecs(tileSize, spriteSheet, sourceRectangles);
             setTileMap(TileTypes);
             setNeighbors(TileTypes);
+            this.size = size;
+            this.mapPosition = mapPosition;
         }
 
         private void setNeighbors(PathTileType[,] TileTypes)
@@ -74,7 +78,7 @@ namespace TowerDefense
         {
             List<PathTile> neighbors = new List<PathTile>();
 
-            if(pos.X + 1 < Specs.Size.X && TileTypes[pos.X + 1, pos.Y] != PathTileType.None)
+            if(pos.X + 1 < size.X && TileTypes[pos.X + 1, pos.Y] != PathTileType.None)
             {
                 neighbors.Add((PathTile)Tiles[pos.X + 1, pos.Y]);
             }
@@ -82,7 +86,7 @@ namespace TowerDefense
             {
                 neighbors.Add((PathTile)Tiles[pos.X - 1, pos.Y]);
             }
-            if (pos.Y + 1 < Specs.Size.Y && TileTypes[pos.X, pos.Y + 1] != PathTileType.None)
+            if (pos.Y + 1 < size.Y && TileTypes[pos.X, pos.Y + 1] != PathTileType.None)
             {
                 neighbors.Add((PathTile)Tiles[pos.X, pos.Y + 1]);
             }
@@ -96,10 +100,10 @@ namespace TowerDefense
 
         private void setTileMap(PathTileType[,] TileTypes)
         {
-            Tiles = new Tile[Specs.Size.X, Specs.Size.Y];
-            for (int x = 0; x < Specs.Size.X; x++)
+            Tiles = new Tile[size.X, size.Y];
+            for (int x = 0; x < size.X; x++)
             {
-                for (int y = 0; y < Specs.Size.Y; y++)
+                for (int y = 0; y < size.Y; y++)
                 {
                     setTile(new Point(x,y), TileTypes);
                 }
@@ -108,7 +112,7 @@ namespace TowerDefense
 
         private void setTile(Point pos, PathTileType[,] TileTypes)
         {
-            Vector2 position = new Vector2(Specs.MapPosition.X + pos.X * Specs.TileSize.X, Specs.MapPosition.Y + pos.Y * Specs.TileSize.Y);
+            Vector2 position = new Vector2(mapPosition.X + pos.X * Specs.TileSize.X, mapPosition.Y + pos.Y * Specs.TileSize.Y);
             float scale = (float)Specs.TileSize.X / Specs.SourceRectangles[PathTileType.None].Width;
 
             if (TileTypes[pos.X, pos.Y] == PathTileType.None)
@@ -128,9 +132,9 @@ namespace TowerDefense
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for(int x = 0; x < Specs.Size.X; x++)
+            for(int x = 0; x < size.X; x++)
             {
-                for(int y = 0; y < Specs.Size.Y; y++)
+                for(int y = 0; y < size.Y; y++)
                 {
                     Tiles[x, y].Draw(spriteBatch);
                 }
