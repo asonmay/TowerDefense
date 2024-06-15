@@ -12,15 +12,16 @@ namespace TowerDefense
 {
     public class MapEditorMenu : Screen
     {
-        private Rectangle listRect;
+        public Rectangle listRect;
         private Color listColor;
         private MapEditorMenuItem[] mapFiles;
         private Button homeButton;
-        private Point mapFileOffests;
+        public Point mapFileOffests;
         public TileMapProfile[] savedMaps;
         private Button newFileButton;
         public TileMapProfile SelectedMap;
         private Texture2D background;
+        public bool shouldMakeNew;
 
         public MapEditorMenu(Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Point newButtonPos, Texture2D background)
         {
@@ -38,6 +39,7 @@ namespace TowerDefense
 
             this.spriteSheet = spriteSheet;
             this.sourceRectangles = sourceRectangles;
+            shouldMakeNew = false;
         }
 
         public void Initalize(MapEditorMenuItem[] profiles)
@@ -57,7 +59,7 @@ namespace TowerDefense
         
             for(int i = 0; i < mapFiles.Length; i++)
             {
-                mapFiles[i].Draw(spriteBatch, listRect.Location + new Point(i * mapFileOffests.X, i * mapFileOffests.Y));
+                mapFiles[i].Draw(spriteBatch);
             }
 
             homeButton.Draw(spriteBatch);
@@ -71,11 +73,13 @@ namespace TowerDefense
                 if (mapFiles[i].editButton.isClicked())
                 {
                     SelectedMap = mapFiles[i].profile;
+                    shouldMakeNew = false;
                     return ScreenTypes.MapEditor;
                 }
             }
             if(newFileButton.isClicked())
             {
+                shouldMakeNew = true;
                 return ScreenTypes.MapEditor;
             }
             if (homeButton.isClicked())

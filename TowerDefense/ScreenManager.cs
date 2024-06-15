@@ -43,24 +43,35 @@ namespace TowerDefense
 
             if (type != currentType)
             {
-                Screen temp = currentScreen;
                 currentScreen = screens[type];
                 currentType = type;
                 if(type == ScreenTypes.MapEditor)
                 {
-                   ((MapEditor)currentScreen).Initialize(((MapEditorMenu)temp).SelectedMap);
+                    ((MapEditorMenu)lastScreen).SelectedMap.name = $"Map {profiles.Count}";
+                    ((MapEditor)currentScreen).Initialize(((MapEditorMenu)lastScreen).SelectedMap, ((MapEditorMenu)lastScreen).shouldMakeNew);
                 }
                 else if(type == ScreenTypes.MapEditorMenu)
                 {
-                    if(lastScreen.ReturnType() == ScreenTypes.MapEditor)
+                    if (lastScreen.ReturnType() == ScreenTypes.MapEditor)
                     {
-                        profiles.Add(((MapEditor)lastScreen).profile);
+                        if(((MapEditor)lastScreen).isNew)
+                        {
+                            profiles.Add(((MapEditor)lastScreen).profile);
+                        }
+                        else
+                        {
+                            profiles.Remove(((MapEditor)lastScreen).original);
+                            profiles.Add(((MapEditor)lastScreen).original);
+                        }
+                       
                     }
-
+                    
                     List<MapEditorMenuItem> items = new List<MapEditorMenuItem>();
                     for (int i = 0; i < profiles.Count; i++)
                     {
-                        items.Add(new MapEditorMenuItem(profiles[i], new Point(380, 50), Color.Black, currentScreen.buttonFont, new Point(10, 20), new Point(100, 20)));
+                        Rectangle rect = ((MapEditorMenu)currentScreen).listRect;
+                        Point offset = ((MapEditorMenu)currentScreen).mapFileOffests;
+                        items.Add(new MapEditorMenuItem(profiles[i], new Point(566, 50), Color.Black, currentScreen.buttonFont, new Point(10, 20), new Point(rect.X + offset.X, rect.Y + i * 60 + offset.Y), new Point(rect.X + offset.X, rect.Y + i * 60 + offset.Y)));
                     }
 
                     ((MapEditorMenu)currentScreen).Initalize(items.ToArray());

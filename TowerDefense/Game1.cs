@@ -77,7 +77,7 @@ namespace TowerDefense
             List<MapEditorMenuItem> temp = new List<MapEditorMenuItem>();
             for (int i = 0; i < temp.Count; i++)
             {
-                temp.Add(new MapEditorMenuItem(profiles[i], new Point(380, 50), Color.Black, buttonFont, new Point(10, 20), new Point(100, 20)));
+                temp.Add(new MapEditorMenuItem(profiles[i], new Point(380, 50), Color.Black, buttonFont, new Point(10, 10), new Point(110, 110 + i * 60), new Point(110, 110 + i * 60)));
             }
             savedMaps = profiles;
             return temp;

@@ -18,6 +18,8 @@ namespace TowerDefense
         public TileMapProfile profile;
         private Point mapHovorPos;
 
+        public TileMapProfile original;
+
         private PathTileType[,] palletTileTypes;
         private TileMapSpecs palletSpecs;
         private TileMapProfile pallet;
@@ -27,6 +29,7 @@ namespace TowerDefense
         private Button exitButton;
         private TextBox nameTextBox;
         private Vector2 canvasPos;
+        public bool isNew;
 
         public MapEditor(Vector2 canvasPos, SpriteFont font, Point saveButtonPos, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D background)
         {
@@ -44,11 +47,17 @@ namespace TowerDefense
             this.canvasPos = canvasPos;
         }
 
-        public void Initialize(TileMapProfile profile)
+        public void Initialize(TileMapProfile profile, bool isNew)
         {
             this.profile = profile;
             palletSpecs = new TileMapSpecs(profile.specs.TileSize, profile.specs.SpriteSheet, profile.specs.SourceRectangles);
             pallet = new TileMapProfile(palletTileTypes, palletSpecs, "pallet", new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), canvasPos);
+            this.isNew = isNew;
+            original = profile;
+            if(isNew)
+            {
+                clear();
+            }
         }
 
         private Point getHoveredTile(TileMapProfile map)
@@ -85,6 +94,11 @@ namespace TowerDefense
                 }
             }
             return GetScreenToSwitch();
+        }
+
+        private void clear()
+        {
+            profile.tileTypes = new PathTileType[profile.Size.X, profile.Size.Y];
         }
 
         public override ScreenTypes ReturnType()
