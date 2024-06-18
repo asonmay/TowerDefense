@@ -12,11 +12,11 @@ namespace TowerDefense
 {
     public struct TileMapProfile
     {
-        public PathTileType[,] tileTypes;
-        public TileMapSpecs specs;
-        public string name;
-        public Point Size;
-        public Vector2 MapPosition;
+        public PathTileType[,] tileTypes { get; set; }
+        public TileMapSpecs specs { get; set; }
+        public string name { get; set; }
+        public Point Size { get; set; }
+        public Vector2 MapPosition { get; set; }
 
         public TileMapProfile(PathTileType[,] tileTypes, TileMapSpecs specs, string name, Point size, Vector2 mapPosition)
         {

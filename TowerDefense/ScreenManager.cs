@@ -22,11 +22,9 @@ namespace TowerDefense
         public Screen currentScreen;
         private ScreenTypes currentType;
         private Dictionary<ScreenTypes, Screen> screens;
+        private TileMapProfile lastProfile;
 
-        private ScreenManager()
-        {
-            
-        }
+        private ScreenManager() { }
 
         public static ScreenManager Instance { get; private set; } = new ScreenManager();
 
@@ -47,7 +45,6 @@ namespace TowerDefense
                 currentType = type;
                 if(type == ScreenTypes.MapEditor)
                 {
-                    ((MapEditorMenu)lastScreen).SelectedMap.name = $"Map {profiles.Count}";
                     ((MapEditor)currentScreen).Initialize(((MapEditorMenu)lastScreen).SelectedMap, ((MapEditorMenu)lastScreen).shouldMakeNew);
                 }
                 else if(type == ScreenTypes.MapEditorMenu)
@@ -56,12 +53,14 @@ namespace TowerDefense
                     {
                         if(((MapEditor)lastScreen).isNew)
                         {
-                            profiles.Add(((MapEditor)lastScreen).profile);
+                            TileMapProfile orignalProfile = ((MapEditor)lastScreen).profile;
+                            TileMapProfile profile = new TileMapProfile(orignalProfile.tileTypes, orignalProfile.specs, $"Map {profiles.Count}", orignalProfile.Size, orignalProfile.MapPosition);
+                            profiles.Add(profile);
                         }
                         else
                         {
                             profiles.Remove(((MapEditor)lastScreen).original);
-                            profiles.Add(((MapEditor)lastScreen).original);
+                            profiles.Add(((MapEditor)lastScreen).profile);
                         }
                        
                     }
@@ -71,7 +70,7 @@ namespace TowerDefense
                     {
                         Rectangle rect = ((MapEditorMenu)currentScreen).listRect;
                         Point offset = ((MapEditorMenu)currentScreen).mapFileOffests;
-                        items.Add(new MapEditorMenuItem(profiles[i], new Point(566, 50), Color.Black, currentScreen.buttonFont, new Point(10, 20), new Point(rect.X + offset.X, rect.Y + i * 60 + offset.Y), new Point(rect.X + offset.X, rect.Y + i * 60 + offset.Y)));
+                        items.Add(new MapEditorMenuItem(profiles[i], new Point(566, 50), Color.Black, currentScreen.buttonFont, new Point(10, 10), new Point(rect.X + offset.X + 556 - (int)currentScreen.buttonFont.MeasureString("Edit").X, rect.Y + i * 60 + offset.Y), new Point(rect.X + offset.X, rect.Y + i * 60 + offset.Y)));
                     }
 
                     ((MapEditorMenu)currentScreen).Initalize(items.ToArray());

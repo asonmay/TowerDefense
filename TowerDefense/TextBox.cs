@@ -1,76 +1,38 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using System;
+using MonoGame.Extended; 
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefense
 {
     public class TextBox
     {
+        private Rectangle box;
+        private Color color;
         public string text;
-        private bool isFocued = false;
-        private static GameWindow gw;
-        private bool beingPressed;
-        private Rectangle textbox;
-
-        public TextBox(Rectangle textbox, GameWindow window)
+        private SpriteFont font;
+        
+        public TextBox(Rectangle box, SpriteFont font)
         {
+            this.box = box;
+            this.font = font;
             text = "";
-            isFocued = false;
-            beingPressed = false;
-            this.textbox = textbox;
-            gw = window;
+ 
         }
 
-        private void OnInput(object sender, TextInputEventArgs e)
+        public void Update(bool isFocused)
         {
-            var k = e.Key;
-            var c = e.Character;
-            if (k == Keys.Space)
-            {
-                text += ' ';
-            }
-            else if (k == Keys.Back)
-            {
-                text = text.Remove(text.Length - 1, 1);
-            }
-            else
-            {
-                text += c;
-            }
 
-            Console.WriteLine(text);
         }
 
-        public void FocusOnTextbox()
+        public void Draw(SpriteBatch spriteBatch)
         {
-            Point mousePos = Mouse.GetState().Position;
-            bool isMouseClicked = Mouse.GetState().LeftButton == ButtonState.Pressed;
-
-            if (isMouseClicked && textbox.Intersects(new Rectangle(mousePos, new Point(1, 1))))
-            {
-                if (!beingPressed)
-                {
-                    beingPressed = true;
-                    isFocued = !isFocued;
-                    if (isFocued)
-                    {
-                        gw.TextInput += OnInput;
-                    }
-                    else if (!isFocued && text != "")
-                    {
-                        gw.TextInput -= OnInput;
-                    }
-                }
-            }
-            else
-            {
-                beingPressed = false;
-            }
+           // spriteBatch.FillRectangle(box, "text", color);
         }
     }
 }

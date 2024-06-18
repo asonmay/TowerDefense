@@ -3,6 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 //https://free-game-assets.itch.io/free-field-enemies-pixel-art-for-tower-defense
 //https://free-game-assets.itch.io/free-archer-towers-pixel-art-for-tower-defense
@@ -59,7 +62,7 @@ namespace TowerDefense
             Texture2D background = Content.Load<Texture2D>("another zanlin");
             SpriteFont titleFont = Content.Load<SpriteFont>("TitleFont");
 
-            savedMaps = new List<TileMapProfile>();
+            savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(File.ReadAllText("Z://TowerDefense//TowerDefense//bin//Debug//net6.0//SavedMaps.Json"), typeof(TileMapProfile[])));
             UpdateSavedMaps(savedMaps);
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
@@ -91,6 +94,14 @@ namespace TowerDefense
             screen.Update(savedMaps);
 
             base.Update(gameTime);
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            string maps = JsonSerializer.Serialize(savedMaps.ToArray());
+            File.WriteAllText("SavedMaps.Json",maps);
+
+            base.OnExiting(sender, args);
         }
 
         protected override void Draw(GameTime gameTime)
