@@ -22,7 +22,6 @@ namespace TowerDefense
         public Screen currentScreen;
         private ScreenTypes currentType;
         private Dictionary<ScreenTypes, Screen> screens;
-        private TileMapProfile lastProfile;
 
         private ScreenManager() { }
 
@@ -54,7 +53,7 @@ namespace TowerDefense
                         if(((MapEditor)lastScreen).isNew)
                         {
                             TileMapProfile orignalProfile = ((MapEditor)lastScreen).profile;
-                            TileMapProfile profile = new TileMapProfile(orignalProfile.tileTypes, orignalProfile.specs, $"Map {profiles.Count}", orignalProfile.Size, orignalProfile.MapPosition);
+                            TileMapProfile profile = new TileMapProfile(orignalProfile.TileTypes, $"Map {profiles.Count}", orignalProfile.Size, orignalProfile.MapPosition);
                             profiles.Add(profile);
                         }
                         else

@@ -21,7 +21,7 @@ namespace TowerDefense
         public TileMapProfile original;
 
         private PathTileType[,] palletTileTypes;
-        private TileMapSpecs palletSpecs;
+        private TileMapSpecs specs;
         private TileMapProfile pallet;
         private Point palletHovorPos;
 
@@ -31,7 +31,7 @@ namespace TowerDefense
         private Vector2 canvasPos;
         public bool isNew;
 
-        public MapEditor(Vector2 canvasPos, SpriteFont font, Point saveButtonPos, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D background)
+        public MapEditor(Vector2 canvasPos, SpriteFont font, Point saveButtonPos, TileMapSpecs specs, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D background)
         {
             palletTileTypes = new PathTileType[,]
             {
@@ -40,7 +40,7 @@ namespace TowerDefense
                 { PathTileType.RightUp, PathTileType.Right, PathTileType.RightDown, PathTileType.None },
             };           
             exitButton = new Button(Color.Red, "exit", saveButtonPos, font, Color.Black);
-
+            this.specs = specs;
             this.spriteSheet = spriteSheet;
             this.sourceRectangles = sourceRectangles;
             this.background = background;
@@ -49,9 +49,8 @@ namespace TowerDefense
 
         public void Initialize(TileMapProfile profile, bool isNew)
         {
-            this.profile = profile;
-            palletSpecs = new TileMapSpecs(profile.specs.TileSize, profile.specs.SpriteSheet, profile.specs.SourceRectangles);
-            pallet = new TileMapProfile(palletTileTypes, palletSpecs, "pallet", new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), canvasPos);
+            this.profile = profile;      
+            pallet = new TileMapProfile(palletTileTypes, "pallet", new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), canvasPos);
             this.isNew = isNew;
             original = profile;
             if(isNew)
@@ -66,14 +65,14 @@ namespace TowerDefense
             {
                 for(int y = 0; y < profile.Size.Y; y++)
                 {
-                    Rectangle hitbox = new Rectangle((int)(x * map.specs.TileSize.X + map.MapPosition.X), (int)(y * map.specs.TileSize.Y + map.MapPosition.Y), map.specs.TileSize.X, map.specs.TileSize.Y);
+                    Rectangle hitbox = new Rectangle((int)(x * specs.TileSize.X + map.MapPosition.X), (int)(y * specs.TileSize.Y + map.MapPosition.Y), specs.TileSize.X, specs.TileSize.Y);
                     if (DoesHovorRect(hitbox))
                     {
                         return new Point(x, y);
                     }
                 }
             }
-            return new Point(-1,-1);
+            return new Point(int.MaxValue,int.MaxValue);
         }
 
         public override ScreenTypes Update()
@@ -83,14 +82,14 @@ namespace TowerDefense
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                if (palletHovorPos.X >= 0)
+                if (palletHovorPos.X != int.MaxValue)
                 {
                     selectedType = palletTileTypes[palletHovorPos.X, palletHovorPos.Y];
                 }
 
-                if (mapHovorPos.X >= 0)
+                if (mapHovorPos.X != int.MaxValue)
                 {
-                    profile.tileTypes[mapHovorPos.X, mapHovorPos.Y] = selectedType;
+                    profile.TileTypes[mapHovorPos.X, mapHovorPos.Y] = selectedType;
                 }
             }
             return GetScreenToSwitch();
@@ -98,7 +97,7 @@ namespace TowerDefense
 
         private void clear()
         {
-            profile.tileTypes = new PathTileType[profile.Size.X, profile.Size.Y];
+            profile.TileTypes = new PathTileType[profile.Size.X, profile.Size.Y];
         }
 
         public override ScreenTypes ReturnType()
@@ -115,30 +114,12 @@ namespace TowerDefense
             return ScreenTypes.MapEditor;
         }
 
-        private void DrawMap(TileMapProfile profile, PathTileType[,] types, SpriteBatch sp, Point hovorPos)
-        {
-            for (int x = 0; x < profile.Size.X; x++)
-            {
-                for (int y = 0; y < profile.Size.Y; y++)
-                {
-                    Vector2 pos = new Vector2(x * profile.specs.TileSize.X + profile.MapPosition.X, y * profile.specs.TileSize.Y + profile.MapPosition.Y);
-                    float scale = (float)profile.specs.TileSize.X / profile.specs.SourceRectangles[PathTileType.None].Width;
-
-                    sp.Draw(profile.specs.SpriteSheet, pos, profile.specs.SourceRectangles[types[x,y]], Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 1);
-
-                    if (hovorPos == new Point(x, y))
-                    {
-                        sp.DrawRectangle(new Rectangle(pos.ToPoint(), profile.specs.TileSize), Color.Red, 4);
-                    }
-
-                }
-            }
-        }
+       
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            DrawMap(profile, profile.tileTypes, spriteBatch, mapHovorPos);
-            DrawMap(pallet, palletTileTypes, spriteBatch, palletHovorPos);
+            profile.DrawMap(spriteBatch, mapHovorPos, specs);
+            pallet.DrawMap(spriteBatch, palletHovorPos, specs);
 
             exitButton.Draw(spriteBatch);
         }

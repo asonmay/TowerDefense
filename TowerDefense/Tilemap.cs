@@ -6,25 +6,96 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TowerDefense
 {
     public struct TileMapProfile
     {
-        public PathTileType[,] tileTypes { get; set; }
-        public TileMapSpecs specs { get; set; }
-        public string name { get; set; }
+        [JsonIgnore]
+        public PathTileType[,] TileTypes { get; set; }
+        [JsonIgnore]
         public Point Size { get; set; }
+
+        [JsonIgnore]
         public Vector2 MapPosition { get; set; }
 
-        public TileMapProfile(PathTileType[,] tileTypes, TileMapSpecs specs, string name, Point size, Vector2 mapPosition)
+        public string Name { get; set; }
+
+        public int Width
         {
-            this.tileTypes = tileTypes;
-            this.specs = specs;
-            this.name = name;
+            get => Size.X;
+            set => Size = new Point(value, Size.Y);
+        }
+        public int Height
+        {
+            get => Size.Y;
+            set => Size = new Point(Size.X, value);
+        }
+
+        public float MapPositionX
+        {
+            get => MapPosition.X;
+            set => MapPosition = new Vector2(value, MapPosition.Y);
+        }
+
+        public float MapPositionY
+        {
+            get => MapPosition.Y;
+            set => MapPosition = new Vector2(MapPosition.X, value);
+        }
+
+        public PathTileType[] JsonTileTypes
+        {
+            get
+            {
+                PathTileType[] temp = new PathTileType[Size.X * Size.Y];
+                for (int x = 0; x < Size.X; x++)
+                {
+                    for (int y = 0; y < Size.Y; y++)
+                    {
+                        temp[y * Size.Y + x] = TileTypes[x, y];
+                    }
+                }
+                return temp;
+            }
+            set
+            {
+                TileTypes = new PathTileType[Size.X, Size.Y];
+                for (int x = 0; x < Size.X; x++)
+                {
+                    for (int y = 0; y < Size.Y; y++)
+                    {
+                        TileTypes[x,y] = value[y * Size.Y + x];
+                    }
+                }
+            }
+        }
+
+        public TileMapProfile(PathTileType[,] tileTypes, string name, Point size, Vector2 mapPosition)
+        {
+            TileTypes = tileTypes;
+            Name = name;
             Size = size;
             MapPosition = mapPosition;
+        }
+
+        public void DrawMap(SpriteBatch sp, Point hovorPos, TileMapSpecs specs)
+        {
+            for (int x = 0; x < Size.X; x++)
+            {
+                for (int y = 0; y < Size.Y; y++)
+                {
+                    Vector2 pos = new Vector2(x * specs.TileSize.X + MapPosition.X, y * specs.TileSize.Y + MapPosition.Y);
+                    float scale = (float)specs.TileSize.X / specs.SourceRectangles[PathTileType.None].Width;
+
+                    sp.Draw(specs.SpriteSheet, pos, specs.SourceRectangles[TileTypes[x, y]], Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 1);
+                }
+            }
+
+            sp.DrawRectangle(new Rectangle(new Point((int)(hovorPos.X * specs.TileSize.X + MapPosition.X), (int)(hovorPos.Y * specs.TileSize.Y + MapPosition.Y)), specs.TileSize), Color.Red, 4);
+          
         }
     }
 

@@ -62,28 +62,18 @@ namespace TowerDefense
             Texture2D background = Content.Load<Texture2D>("another zanlin");
             SpriteFont titleFont = Content.Load<SpriteFont>("TitleFont");
 
-            savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(File.ReadAllText("Z://TowerDefense//TowerDefense//bin//Debug//net6.0//SavedMaps.Json"), typeof(TileMapProfile[])));
-            UpdateSavedMaps(savedMaps);
+            string serializedData = File.ReadAllText("Z://TowerDefense//TowerDefense//bin//Debug//net6.0//SavedMaps.Json");
+            savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
+          //  savedMaps.Clear();
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
             {
                 [ScreenTypes.HomeScreen] = new HomeScreen(background, new Point(100, 500), new Point(200, 500), Color.Red, Color.Red, buttonFont, background, titleFont, GraphicsDevice.Viewport),
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
-                [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32,10), spriteSheet, sourceRectangles, background)
+                [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32,10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background)
             };
 
             screen.Initilize(screens);
-        }
-
-        public List<MapEditorMenuItem> UpdateSavedMaps(List<TileMapProfile> profiles)
-        {
-            List<MapEditorMenuItem> temp = new List<MapEditorMenuItem>();
-            for (int i = 0; i < temp.Count; i++)
-            {
-                temp.Add(new MapEditorMenuItem(profiles[i], new Point(380, 50), Color.Black, buttonFont, new Point(10, 10), new Point(110, 110 + i * 60), new Point(110, 110 + i * 60)));
-            }
-            savedMaps = profiles;
-            return temp;
         }
 
         protected override void Update(GameTime gameTime)

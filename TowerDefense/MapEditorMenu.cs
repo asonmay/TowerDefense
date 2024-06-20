@@ -27,7 +27,7 @@ namespace TowerDefense
         {
             TileMapSpecs defultSpecs = new TileMapSpecs(new Point(32,32), spriteSheet, sourceRectangles);
             PathTileType[,] defaultTileTypes = new PathTileType[20,18];
-            SelectedMap = new TileMapProfile(defaultTileTypes, defultSpecs, "Map1", new Point(20, 18), new Vector2(20, 64));
+            SelectedMap = new TileMapProfile(defaultTileTypes, "Map1", new Point(20, 18), new Vector2(20, 64));
 
             this.listColor = listColor;
             this.listRect = listRect;

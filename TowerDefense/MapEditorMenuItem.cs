@@ -33,7 +33,7 @@ namespace TowerDefense
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.FillRectangle(new Rectangle(pos, size), backgroundColor);
-            spriteBatch.DrawString(nameFont, profile.name, (pos + namePos).ToVector2(), Color.White);
+            spriteBatch.DrawString(nameFont, profile.Name, (pos + namePos).ToVector2(), Color.White);
             editButton.Draw(spriteBatch);
         }
     }
