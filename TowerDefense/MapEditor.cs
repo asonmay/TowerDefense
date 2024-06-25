@@ -72,7 +72,7 @@ namespace TowerDefense
                     }
                 }
             }
-            return new Point(int.MaxValue,int.MaxValue);
+            return new Point(int.MaxValue / 32,int.MaxValue / 32);
         }
 
         public override ScreenTypes Update()
@@ -82,12 +82,12 @@ namespace TowerDefense
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                if (palletHovorPos.X != int.MaxValue)
+                if (palletHovorPos.X != int.MaxValue / 32)
                 {
                     selectedType = palletTileTypes[palletHovorPos.X, palletHovorPos.Y];
                 }
 
-                if (mapHovorPos.X != int.MaxValue)
+                if (mapHovorPos.X != int.MaxValue / 32)
                 {
                     profile.TileTypes[mapHovorPos.X, mapHovorPos.Y] = selectedType;
                 }

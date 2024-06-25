@@ -51,7 +51,7 @@ namespace TowerDefense
         {
             if (playButton.isClicked())
             {
-
+                return ScreenTypes.PlayMenu;
             }
             else if(mapEditorButton.isClicked())
             {

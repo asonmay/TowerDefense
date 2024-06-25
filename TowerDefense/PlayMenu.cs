@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
-    public class MapEditorMenu : Screen
+    public class PlayMenu : Screen
     {
         public Rectangle listRect;
         private Color listColor;
@@ -18,28 +18,20 @@ namespace TowerDefense
         private Button homeButton;
         public Point mapFileOffests;
         public TileMapProfile[] savedMaps;
-        private Button newFileButton;
         public TileMapProfile SelectedMap;
         private Texture2D background;
-        public bool shouldMakeNew;
 
-        public MapEditorMenu(Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Point newButtonPos, Texture2D background)
+        public PlayMenu(Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Texture2D background)
         {
-            TileMapSpecs defultSpecs = new TileMapSpecs(new Point(32,32), spriteSheet, sourceRectangles);
-            PathTileType[,] defaultTileTypes = new PathTileType[20,18];
-            SelectedMap = new TileMapProfile(defaultTileTypes, "Map1", new Point(20, 18), new Vector2(20, 64));
-
             this.listColor = listColor;
             this.listRect = listRect;
             this.mapFileOffests = mapFileOffests;
             this.buttonFont = buttonFont;
             homeButton = new Button(Color.Red, "Home", homeButtonPos, buttonFont, Color.Black);
-            newFileButton = new Button(Color.Red, "New Map", newButtonPos, buttonFont, Color.Black);
             this.background = background;
 
             this.spriteSheet = spriteSheet;
             this.sourceRectangles = sourceRectangles;
-            shouldMakeNew = false;
         }
 
         public void Initalize(MapEditorMenuItem[] profiles)
@@ -63,7 +55,6 @@ namespace TowerDefense
             }
 
             homeButton.Draw(spriteBatch);
-            newFileButton.Draw(spriteBatch);
         }
 
         public override ScreenTypes Update()
@@ -73,20 +64,14 @@ namespace TowerDefense
                 if (mapFiles[i].editButton.isClicked())
                 {
                     SelectedMap = mapFiles[i].profile;
-                    shouldMakeNew = false;
-                    return ScreenTypes.MapEditor;
+                    return ScreenTypes.Game;
                 }
-            }
-            if(newFileButton.isClicked())
-            {
-                shouldMakeNew = true;
-                return ScreenTypes.MapEditor;
             }
             if (homeButton.isClicked())
             {
                 return ScreenTypes.HomeScreen;
             }
-            return ScreenTypes.MapEditorMenu;
+            return ScreenTypes.PlayMenu;
         }
     }
 }

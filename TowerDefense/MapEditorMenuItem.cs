@@ -27,7 +27,7 @@ namespace TowerDefense
             this.nameFont = nameFont;
             this.pos = pos;
             this.namePos = namePos;
-            editButton = new Button(Color.Gray, "Edit", buttonPos, nameFont, Color.Black);
+            editButton = new Button(Color.Gray, "Select", buttonPos, nameFont, Color.Black);
         }
 
         public void Draw(SpriteBatch spriteBatch)
