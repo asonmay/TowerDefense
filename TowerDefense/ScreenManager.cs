@@ -35,10 +35,10 @@ namespace TowerDefense
             currentScreen = screens[ScreenTypes.HomeScreen];
         }
 
-        public void Update(List<TileMapProfile> profiles)
+        public void Update(List<TileMapProfile> profiles, GameTime gameTime)
         {
             Screen lastScreen = currentScreen;
-            ScreenTypes type = currentScreen.Update();
+            ScreenTypes type = currentScreen.Update(gameTime);
 
             if (type != currentType)
             {
@@ -72,7 +72,7 @@ namespace TowerDefense
                         if(((MapEditor)lastScreen).isNew)
                         {
                             TileMapProfile orignalProfile = ((MapEditor)lastScreen).profile;
-                            TileMapProfile profile = new TileMapProfile(orignalProfile.TileTypes, $"Map {profiles.Count}", orignalProfile.Size, orignalProfile.MapPosition);
+                            TileMapProfile profile = new TileMapProfile(orignalProfile.TileTypes, $"Map {profiles.Count}", orignalProfile.Size, orignalProfile.MapPosition, orignalProfile.StartingPoint, orignalProfile.EndingPoint);
                             profiles.Add(profile);
                         }
                         else

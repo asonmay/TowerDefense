@@ -17,6 +17,10 @@ namespace TowerDefense
         public PathTileType[,] TileTypes { get; set; }
         [JsonIgnore]
         public Point Size { get; set; }
+        [JsonIgnore]
+        public Point StartingPoint { get; set; }
+        [JsonIgnore]
+        public Point EndingPoint { get; set; }
 
         [JsonIgnore]
         public Vector2 MapPosition { get; set; }
@@ -33,7 +37,26 @@ namespace TowerDefense
             get => Size.Y;
             set => Size = new Point(Size.X, value);
         }
-
+        public int startingPointX
+        {
+            get => StartingPoint.X;
+            set => StartingPoint = new Point(value, StartingPoint.X);
+        }
+        public int startingPointY
+        {
+            get => StartingPoint.Y;
+            set => StartingPoint = new Point(StartingPoint.X, value);
+        }
+        public int endingPointX
+        {
+            get => EndingPoint.X;
+            set => EndingPoint = new Point(value, EndingPoint.X);
+        }
+        public int endingPointY
+        {
+            get => EndingPoint.Y;
+            set => EndingPoint = new Point(EndingPoint.X, value);
+        }
         public float MapPositionX
         {
             get => MapPosition.X;
@@ -73,12 +96,14 @@ namespace TowerDefense
             }
         }
 
-        public TileMapProfile(PathTileType[,] tileTypes, string name, Point size, Vector2 mapPosition)
+        public TileMapProfile(PathTileType[,] tileTypes, string name, Point size, Vector2 mapPosition, Point startingPos, Point endingPos)
         {
             TileTypes = tileTypes;
             Name = name;
             Size = size;
             MapPosition = mapPosition;
+            StartingPoint = startingPos;
+            EndingPoint = endingPos;
         }
 
         public void DrawMap(SpriteBatch sp, Point hovorPos, TileMapSpecs specs)
@@ -120,17 +145,21 @@ namespace TowerDefense
         public Vector2 mapPosition;
         public Point size;
         public Tile[,] Tiles;
+        public Point startingPoint;
+        public Point endingPoint;
 
-        public Tilemap(Point size, Point tileSize, PathTileType[,] TileTypes, Vector2 mapPosition, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet)
+        public Tilemap(Point size, Point tileSize, PathTileType[,] TileTypes, Vector2 mapPosition, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D spriteSheet, Point startingPoint, Point endingPoint)
         {
             Specs = new TileMapSpecs(tileSize, spriteSheet, sourceRectangles);
-            setTileMap(TileTypes);
-            setNeighbors(TileTypes);
+            SetTileMap(TileTypes);
+            SetNeighbors(TileTypes);
             this.size = size;
             this.mapPosition = mapPosition;
+            this.startingPoint = startingPoint;
+            this.endingPoint = endingPoint;
         }
 
-        private void setNeighbors(PathTileType[,] TileTypes)
+        private void SetNeighbors(PathTileType[,] TileTypes)
         {
             for (int x = 0; x < TileTypes.GetLength(0); x++)
             {
@@ -139,13 +168,13 @@ namespace TowerDefense
                     if (Tiles[x, y] is PathTile)
                     {
                         PathTile temp = (PathTile)Tiles[x, y];
-                        temp.neighbors = getNeighbors(new Point(x, y), TileTypes);
+                        temp.Neighbors = GetNeighbors(new Point(x, y), TileTypes);
                     }
                 }
             }
         }
 
-        private PathTile[] getNeighbors(Point pos, PathTileType[,] TileTypes)
+        private PathTile[] GetNeighbors(Point pos, PathTileType[,] TileTypes)
         {
             List<PathTile> neighbors = new List<PathTile>();
 
@@ -169,19 +198,19 @@ namespace TowerDefense
             return neighbors.ToArray();         
         }
 
-        private void setTileMap(PathTileType[,] TileTypes)
+        private void SetTileMap(PathTileType[,] TileTypes)
         {
             Tiles = new Tile[size.X, size.Y];
             for (int x = 0; x < size.X; x++)
             {
                 for (int y = 0; y < size.Y; y++)
                 {
-                    setTile(new Point(x,y), TileTypes);
+                    SetTile(new Point(x,y), TileTypes);
                 }
             }
         }
 
-        private void setTile(Point pos, PathTileType[,] TileTypes)
+        private void SetTile(Point pos, PathTileType[,] TileTypes)
         {
             Vector2 position = new Vector2(mapPosition.X + pos.X * Specs.TileSize.X, mapPosition.Y + pos.Y * Specs.TileSize.Y);
             float scale = (float)Specs.TileSize.X / Specs.SourceRectangles[PathTileType.None].Width;

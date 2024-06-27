@@ -28,13 +28,19 @@ namespace TowerDefense
 
     public class PathTile : Tile
     {
-        public PathTile[] neighbors { get; set; }
+        public PathTile[] Neighbors { get; set; }
         private PathTileType type;
+        public bool hasBeenVisited;
+        public float cumulativeDistance;
+        public PathTile Founder { get; set; }
 
         public PathTile(Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture, Point gridPos, PathTileType type)
             : base(position, color, scale, rotation, sourceRectangle, origin, texture, gridPos)
         {
             this.type = type;
+            hasBeenVisited = false;
+            cumulativeDistance = float.MaxValue;
+
         }
 
         public PathTileType GetTileType()

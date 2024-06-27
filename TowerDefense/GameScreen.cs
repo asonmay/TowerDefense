@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace TowerDefense
 
         public void Initialize(TileMapProfile profile)
         {
-            map = new Tilemap(profile.Size, specs.TileSize, profile.TileTypes, profile.MapPosition, specs.SourceRectangles, specs.SpriteSheet);
+            map = new Tilemap(profile.Size, specs.TileSize, profile.TileTypes, profile.MapPosition, specs.SourceRectangles, specs.SpriteSheet, profile.StartingPoint, profile.EndingPoint);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -45,11 +46,11 @@ namespace TowerDefense
             return ScreenTypes.Game;
         }
 
-        public override ScreenTypes Update()
+        public override ScreenTypes Update(GameTime gameTime)
         {
             for(int i = 0; i < enemies.Length; i++)
             {
-                enemies[i].Update();
+                enemies[i].Update(gameTime, map.Tiles, map.startingPoint, map.endingPoint);
             }
 
             return ReturnType();

@@ -50,7 +50,7 @@ namespace TowerDefense
         public void Initialize(TileMapProfile profile, bool isNew)
         {
             this.profile = profile;      
-            pallet = new TileMapProfile(palletTileTypes, "pallet", new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), canvasPos);
+            pallet = new TileMapProfile(palletTileTypes, "pallet", new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), canvasPos, new Point(0,0), new Point(0,0));
             this.isNew = isNew;
             original = profile;
             if(isNew)
@@ -75,7 +75,7 @@ namespace TowerDefense
             return new Point(int.MaxValue / 32,int.MaxValue / 32);
         }
 
-        public override ScreenTypes Update()
+        public override ScreenTypes Update(GameTime gameTime)
         {
             mapHovorPos = getHoveredTile(profile);
             palletHovorPos = getHoveredTile(pallet);

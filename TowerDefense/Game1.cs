@@ -72,6 +72,7 @@ namespace TowerDefense
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32,10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
                 [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),
+                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32,32), spriteSheet, sourceRectangles)),
             };
 
             screen.Initilize(screens);
@@ -82,7 +83,7 @@ namespace TowerDefense
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            screen.Update(savedMaps);
+            screen.Update(savedMaps, gameTime);
 
             base.Update(gameTime);
         }

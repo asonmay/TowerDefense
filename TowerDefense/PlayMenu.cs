@@ -53,11 +53,11 @@ namespace TowerDefense
             {
                 mapFiles[i].Draw(spriteBatch);
             }
-
+            
             homeButton.Draw(spriteBatch);
         }
 
-        public override ScreenTypes Update()
+        public override ScreenTypes Update(GameTime gameTime)
         {
             for(int i = 0; i < mapFiles.Count; i++)
             {

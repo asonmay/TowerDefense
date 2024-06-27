@@ -43,7 +43,7 @@ namespace TowerDefense
 
         public abstract ScreenTypes ReturnType();
 
-        public abstract ScreenTypes Update();
+        public abstract ScreenTypes Update(GameTime gameTime);
 
         public abstract void Draw(SpriteBatch spriteBatch);
     }

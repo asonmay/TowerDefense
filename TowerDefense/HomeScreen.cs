@@ -37,7 +37,7 @@ namespace TowerDefense
             mapEditorButton.Draw(spriteBatch);
         }
 
-        public override ScreenTypes Update()
+        public override ScreenTypes Update(GameTime gameTime)
         {
             return GetScreenToSwitch();
         }
