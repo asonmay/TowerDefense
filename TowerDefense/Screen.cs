@@ -13,7 +13,7 @@ namespace TowerDefense
     {
         public SpriteFont buttonFont;
         public Texture2D spriteSheet;
-        public Dictionary<PathTileType, Rectangle> sourceRectangles;
+        public Dictionary<TileTypes, Rectangle> sourceRectangles;
         public Texture2D background;
         public Viewport viewPort;
 

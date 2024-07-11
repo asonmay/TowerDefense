@@ -11,18 +11,25 @@ namespace TowerDefense
 {
     public class Enemy : Sprite
     {
-        public int health { get; set; }
-        public Point gridPos { get; set; }
-        public int speed;
+        public int Health { get; set; }
+        public Point GridPos { get; set; }
+        public int Speed;
         private TimeSpan enemyTimer;
+        public bool HasReachedEnd;
 
         public Enemy(int speed, int health, Point gridPos, Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture)
             : base(position, color, scale, rotation, sourceRectangle, origin, texture)
         {
-            this.speed = speed;
-            this.health = health;
-            this.gridPos = gridPos;
+            Speed = speed;
+            Health = health;
+            GridPos = gridPos;
             enemyTimer = TimeSpan.Zero;
+        }
+
+        public Enemy(int speed, int health, Point gridPos, float scale, Rectangle sourceRectangle, Texture2D texture)
+            :this(speed, health, gridPos, new Vector2(0,0), Color.White, scale, 0, sourceRectangle, Vector2.Zero, texture)
+        {
+
         }
 
         private void ResetPathTiles(Tile[,] tiles)
@@ -82,15 +89,21 @@ namespace TowerDefense
 
         public void Move(Tile[,] tiles, Point startingPoint, Point endingPoint)
         {
-            gridPos = GetShortestRougt(tiles, startingPoint, endingPoint)[0].GridPos;
+            GridPos = GetShortestRougt(tiles, startingPoint, endingPoint)[0].GridPos;
         }
 
-        public void Update(GameTime gameTime, Tile[,] tiles, Point startingPoint, Point endingPoint)
+        public void Update(GameTime gameTime, Tilemap tiles)
         {
             enemyTimer += gameTime.ElapsedGameTime;
-            if(enemyTimer.TotalMilliseconds >= speed)
+            if(enemyTimer.TotalMilliseconds >= Speed)
             {
-                Move(tiles, startingPoint, endingPoint);
+                Move(tiles.Tiles, tiles.StartingPoint, tiles.EndingPoint);
+            }
+            position = new Vector2(tiles.mapPosition.X + GridPos.X * tiles.Specs.TileSize.X, tiles.mapPosition.Y + GridPos.Y * tiles.Specs.TileSize.Y);
+
+            if (GridPos == tiles.EndingPoint)
+            {
+                HasReachedEnd = true;
             }
         }
 

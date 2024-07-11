@@ -19,9 +19,9 @@ namespace TowerDefense
         public Point mapFileOffests;
         public TileMapProfile[] savedMaps;
         public TileMapProfile SelectedMap;
-        private Texture2D background;
+        
 
-        public PlayMenu(Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Texture2D background)
+        public PlayMenu(Texture2D spriteSheet, Dictionary<TileTypes, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Texture2D background)
         {
             this.listColor = listColor;
             this.listRect = listRect;
@@ -59,6 +59,7 @@ namespace TowerDefense
 
         public override ScreenTypes Update(GameTime gameTime)
         {
+
             for(int i = 0; i < mapFiles.Count; i++)
             {
                 if (mapFiles[i].editButton.isClicked())

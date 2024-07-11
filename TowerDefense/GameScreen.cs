@@ -13,29 +13,34 @@ namespace TowerDefense
         private Tilemap map;
         private int money;
         private Tower[] towers;
-        private Enemy[] enemies;
+        private List<Enemy> enemies;
         private int faze;
         private TileMapSpecs specs;
+        private TimeSpan enemySpawnTimer;
+        private TimeSpan enemySpawnRate;
+        private Enemy startingEnemy;
 
-        public GameScreen(TileMapSpecs specs)
+        public GameScreen(TileMapSpecs specs, Enemy startingEnemy)
         {
             this.specs = specs;
             money = 100;
             faze = 1;
             towers = new Tower[0];
-            enemies = new Enemy[0];
+            enemies = new List<Enemy>();
+            this.startingEnemy = startingEnemy;
         }
 
         public void Initialize(TileMapProfile profile)
         {
-            map = new Tilemap(profile.Size, specs.TileSize, profile.TileTypes, profile.MapPosition, specs.SourceRectangles, specs.SpriteSheet, profile.StartingPoint, profile.EndingPoint);
+            map = new Tilemap(profile.Size, specs.TileSize, profile.TileTypes, profile.MapPosition, specs.SourceRectangles, specs.SpriteSheet);
+            startingEnemy.GridPos = map.StartingPoint;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             map.Draw(spriteBatch);
 
-            for(int i = 0; i < enemies.Length; i++)
+            for(int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].Draw(spriteBatch);
             }
@@ -48,9 +53,19 @@ namespace TowerDefense
 
         public override ScreenTypes Update(GameTime gameTime)
         {
-            for(int i = 0; i < enemies.Length; i++)
+            enemySpawnTimer += gameTime.ElapsedGameTime;
+            if(enemySpawnTimer >= enemySpawnRate)
             {
-                enemies[i].Update(gameTime, map.Tiles, map.startingPoint, map.endingPoint);
+                enemies.Add(startingEnemy);
+            }
+
+            for(int i = 0; i < enemies.Count; i++)
+            {
+                enemies[i].Update(gameTime, map);
+                if (enemies[i].HasReachedEnd)
+                {
+                    enemies.Remove(enemies[i]);
+                }
             }
 
             return ReturnType();

@@ -17,28 +17,26 @@ namespace TowerDefense
     {
         public TileMapProfile profile;
         private Point mapHovorPos;
-
         public TileMapProfile original;
-
-        private PathTileType[,] palletTileTypes;
+        private TileTypes[,] palletTileTypes;
         private TileMapSpecs specs;
         private TileMapProfile pallet;
         private Point palletHovorPos;
-
-        private PathTileType selectedType;
+        private TileTypes selectedType;
         private Button exitButton;
         private TextBox nameTextBox;
         private Vector2 canvasPos;
         public bool isNew;
 
-        public MapEditor(Vector2 canvasPos, SpriteFont font, Point saveButtonPos, TileMapSpecs specs, Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Texture2D background)
+        public MapEditor(Vector2 canvasPos, SpriteFont font, Point saveButtonPos, TileMapSpecs specs, Texture2D spriteSheet, Dictionary<TileTypes, Rectangle> sourceRectangles, Texture2D background)
         {
-            palletTileTypes = new PathTileType[,]
+            palletTileTypes = new TileTypes[,]
             {
-                { PathTileType.LeftUp, PathTileType.Left, PathTileType.LeftDown, PathTileType.None },
-                { PathTileType.Up, PathTileType.Center, PathTileType.Down , PathTileType.None},
-                { PathTileType.RightUp, PathTileType.Right, PathTileType.RightDown, PathTileType.None },
-            };           
+                { TileTypes.LeftUp, TileTypes.Left, TileTypes.LeftDown, TileTypes.Grass, TileTypes.Spawner},
+                { TileTypes.Up, TileTypes.Center, TileTypes.Down , TileTypes.Grass, TileTypes.End},
+                { TileTypes.RightUp, TileTypes.Right, TileTypes.RightDown, TileTypes.Grass, TileTypes.Grass},
+            };
+
             exitButton = new Button(Color.Red, "exit", saveButtonPos, font, Color.Black);
             this.specs = specs;
             this.spriteSheet = spriteSheet;
@@ -50,7 +48,7 @@ namespace TowerDefense
         public void Initialize(TileMapProfile profile, bool isNew)
         {
             this.profile = profile;      
-            pallet = new TileMapProfile(palletTileTypes, "pallet", new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), canvasPos, new Point(0,0), new Point(0,0));
+            pallet = new TileMapProfile(palletTileTypes, "pallet", new Point(palletTileTypes.GetLength(0), palletTileTypes.GetLength(1)), canvasPos);
             this.isNew = isNew;
             original = profile;
             if(isNew)
@@ -59,7 +57,7 @@ namespace TowerDefense
             }
         }
 
-        private Point getHoveredTile(TileMapProfile map)
+        private Point GetHoveredTile(TileMapProfile map)
         {
             for(int x = 0; x < profile.Size.X; x++)
             {
@@ -77,8 +75,8 @@ namespace TowerDefense
 
         public override ScreenTypes Update(GameTime gameTime)
         {
-            mapHovorPos = getHoveredTile(profile);
-            palletHovorPos = getHoveredTile(pallet);
+            mapHovorPos = GetHoveredTile(profile);
+            palletHovorPos = GetHoveredTile(pallet);
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
@@ -92,12 +90,13 @@ namespace TowerDefense
                     profile.TileTypes[mapHovorPos.X, mapHovorPos.Y] = selectedType;
                 }
             }
+
             return GetScreenToSwitch();
         }
 
         private void clear()
         {
-            profile.TileTypes = new PathTileType[profile.Size.X, profile.Size.Y];
+            profile.TileTypes = new TileTypes[profile.Size.X, profile.Size.Y];
         }
 
         public override ScreenTypes ReturnType()

@@ -12,8 +12,8 @@ namespace TowerDefense
     {
         private Tower tower;
 
-        public TowerTile(Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture, Point gridPos, Tower tower)
-           : base(position, color, scale, rotation, sourceRectangle, origin, texture, gridPos)
+        public TowerTile(Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture, Point gridPos, Tower tower, TileTypes type)
+           : base(position, color, scale, rotation, sourceRectangle, origin, texture, gridPos, type)
         {
             this.tower = tower;
         }

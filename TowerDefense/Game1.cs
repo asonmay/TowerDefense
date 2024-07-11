@@ -46,18 +46,20 @@ namespace TowerDefense
 
             Texture2D spriteSheet = Content.Load<Texture2D>("FieldsTileset");
 
-            Dictionary<PathTileType, Rectangle> sourceRectangles = new Dictionary<PathTileType, Rectangle>
+            Dictionary<TileTypes, Rectangle> sourceRectangles = new Dictionary<TileTypes, Rectangle>
             {
-                [PathTileType.None] = new Rectangle(160, 128, 32, 32),
-                [PathTileType.Center] = new Rectangle(64, 64, 32, 32),
-                [PathTileType.Right] = new Rectangle(0, 32, 32, 32),
-                [PathTileType.Left] = new Rectangle(128, 32, 32, 32),
-                [PathTileType.LeftUp] = new Rectangle(32, 32, 32, 32),
-                [PathTileType.RightUp] = new Rectangle(96, 32, 32, 32),
-                [PathTileType.LeftDown] = new Rectangle(32, 96, 32, 32),
-                [PathTileType.RightDown] = new Rectangle(96, 96, 32, 32),
-                [PathTileType.Up] = new Rectangle(64, 128, 32, 32),
-                [PathTileType.Down] = new Rectangle(64, 0, 32, 32),
+                [TileTypes.Grass] = new Rectangle(160, 128, 32, 32),
+                [TileTypes.Spawner] = new Rectangle(64, 64, 32, 32),
+                [TileTypes.End] = new Rectangle(64, 64, 32, 32),
+                [TileTypes.Center] = new Rectangle(64, 64, 32, 32),
+                [TileTypes.Right] = new Rectangle(0, 32, 32, 32),
+                [TileTypes.Left] = new Rectangle(128, 32, 32, 32),
+                [TileTypes.LeftUp] = new Rectangle(32, 32, 32, 32),
+                [TileTypes.RightUp] = new Rectangle(96, 32, 32, 32),
+                [TileTypes.LeftDown] = new Rectangle(32, 96, 32, 32),
+                [TileTypes.RightDown] = new Rectangle(96, 96, 32, 32),
+                [TileTypes.Up] = new Rectangle(64, 128, 32, 32),
+                [TileTypes.Down] = new Rectangle(64, 0, 32, 32),
             };
 
             Texture2D background = Content.Load<Texture2D>("another zanlin");
@@ -65,6 +67,8 @@ namespace TowerDefense
 
             string serializedData = File.ReadAllText("Z://TowerDefense//TowerDefense//bin//Debug//net6.0//SavedMaps.Json");
             savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
+            Texture2D enemyTexture = Content.Load<Texture2D>("another zanlin");
+            Rectangle sourceRectangle = new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height);
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
             {
@@ -72,7 +76,7 @@ namespace TowerDefense
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32,10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
                 [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),
-                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32,32), spriteSheet, sourceRectangles)),
+                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32,32), spriteSheet, sourceRectangles), new Enemy(1000, 100, new Point(0,0), 0.10f, sourceRectangle, enemyTexture)),
             };
 
             screen.Initilize(screens);

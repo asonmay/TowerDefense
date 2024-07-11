@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
-    public enum PathTileType
+    public enum TileTypes
     {
-        None,
+        Grass,
+        Spawner,
+        End,
         Center,
         Left,
         Right,
@@ -29,13 +31,13 @@ namespace TowerDefense
     public class PathTile : Tile
     {
         public PathTile[] Neighbors { get; set; }
-        private PathTileType type;
+        private TileTypes type;
         public bool hasBeenVisited;
         public float cumulativeDistance;
         public PathTile Founder { get; set; }
 
-        public PathTile(Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture, Point gridPos, PathTileType type)
-            : base(position, color, scale, rotation, sourceRectangle, origin, texture, gridPos)
+        public PathTile(Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture, Point gridPos, TileTypes type)
+            : base(position, color, scale, rotation, sourceRectangle, origin, texture, gridPos, type)
         {
             this.type = type;
             hasBeenVisited = false;
@@ -43,7 +45,7 @@ namespace TowerDefense
 
         }
 
-        public PathTileType GetTileType()
+        public TileTypes GetTileType()
         {
             return type;
         }

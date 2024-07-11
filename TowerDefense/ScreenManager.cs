@@ -72,7 +72,7 @@ namespace TowerDefense
                         if(((MapEditor)lastScreen).isNew)
                         {
                             TileMapProfile orignalProfile = ((MapEditor)lastScreen).profile;
-                            TileMapProfile profile = new TileMapProfile(orignalProfile.TileTypes, $"Map {profiles.Count}", orignalProfile.Size, orignalProfile.MapPosition, orignalProfile.StartingPoint, orignalProfile.EndingPoint);
+                            TileMapProfile profile = new TileMapProfile(orignalProfile.TileTypes, $"Map {profiles.Count}", orignalProfile.Size, orignalProfile.MapPosition);
                             profiles.Add(profile);
                         }
                         else

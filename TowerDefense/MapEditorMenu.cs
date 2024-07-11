@@ -20,13 +20,12 @@ namespace TowerDefense
         public TileMapProfile[] savedMaps;
         private Button newFileButton;
         public TileMapProfile SelectedMap;
-        private Texture2D background;
         public bool shouldMakeNew;
 
-        public MapEditorMenu(Texture2D spriteSheet, Dictionary<PathTileType, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Point newButtonPos, Texture2D background)
+        public MapEditorMenu(Texture2D spriteSheet, Dictionary<TileTypes, Rectangle> sourceRectangles, Rectangle listRect, Color listColor, Point mapFileOffests, Point homeButtonPos, SpriteFont buttonFont, Point newButtonPos, Texture2D background)
         {
             TileMapSpecs defultSpecs = new TileMapSpecs(new Point(32,32), spriteSheet, sourceRectangles);
-            PathTileType[,] defaultTileTypes = new PathTileType[20,18];
+            TileTypes[,] defaultTileTypes = new TileTypes[20,18];
             SelectedMap = new TileMapProfile(defaultTileTypes, "Map1", new Point(20, 18), new Vector2(20, 64));
 
             this.listColor = listColor;
