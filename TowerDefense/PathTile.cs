@@ -40,9 +40,6 @@ namespace TowerDefense
             : base(position, color, scale, rotation, sourceRectangle, origin, texture, gridPos, type)
         {
             this.type = type;
-            hasBeenVisited = false;
-            cumulativeDistance = float.MaxValue;
-
         }
 
         public TileTypes GetTileType()

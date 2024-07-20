@@ -94,6 +94,10 @@ namespace TowerDefense
                     {
                         color = Color.Red;
                     }
+                    if (TileTypes[x, y] == TowerDefense.TileTypes.End)
+                    {
+                        color = Color.Black;
+                    }
 
                     sp.Draw(specs.SpriteSheet, pos, specs.SourceRectangles[TileTypes[x, y]], color, 0, Vector2.Zero, scale, SpriteEffects.None, 1);
                 }

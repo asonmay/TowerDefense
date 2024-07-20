@@ -10,30 +10,30 @@ namespace TowerDefense
 {
     public abstract class Sprite
     {
-        public Vector2 position;
+        public Vector2 Position;
         private Color color;
-        private float scale;
+        public float Scale;
         private int rotation;
-        private Rectangle sourceRectangle;
+        public Rectangle SourceRectangle;
         private Vector2 origin;
-        private Texture2D texture;
+        public Texture2D Texture;
         public Rectangle Hitbox
         {
             get
             {
-                return new Rectangle((int)position.X, (int)position.Y, (int)(sourceRectangle.Width * scale), (int)(sourceRectangle.Height * scale));
+                return new Rectangle((int)Position.X, (int)Position.Y, (int)(SourceRectangle.Width * Scale), (int)(SourceRectangle.Height * Scale));
             }
         }
 
         public Sprite(Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture)
         {
-            this.position = position;
+            Position = position;
             this.color = color;
-            this.scale = scale;
+            Scale = scale;
             this.rotation = rotation;
-            this.sourceRectangle = sourceRectangle;
+            SourceRectangle = sourceRectangle;
             this.origin = origin;
-            this.texture = texture;
+            Texture = texture;
         }
 
         public Sprite(Vector2 position, float scale, Texture2D texture)
@@ -41,7 +41,7 @@ namespace TowerDefense
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, SpriteEffects.None, 1);
+            spriteBatch.Draw(Texture, Position, SourceRectangle, color, rotation, origin, Scale, SpriteEffects.None, 1);
         }
     }
 }

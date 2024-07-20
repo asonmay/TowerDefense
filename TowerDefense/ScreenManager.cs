@@ -18,6 +18,7 @@ namespace TowerDefense
         Game,
         MapEditor,
         MapEditorMenu,
+        GameScreen,
     }
     public class ScreenManager
     {
@@ -93,6 +94,10 @@ namespace TowerDefense
                     }
 
                     ((MapEditorMenu)currentScreen).Initalize(items.ToArray());
+                }
+                if(type == ScreenTypes.Game)
+                {
+
                 }
             }
         }

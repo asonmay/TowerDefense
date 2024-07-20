@@ -18,22 +18,24 @@ namespace TowerDefense
         private TileMapSpecs specs;
         private TimeSpan enemySpawnTimer;
         private TimeSpan enemySpawnRate;
-        private Enemy startingEnemy;
+        public Enemy StartingEnemy;
 
-        public GameScreen(TileMapSpecs specs, Enemy startingEnemy)
+        public GameScreen(TileMapSpecs specs, Enemy startingEnemy, TimeSpan enemySpawnRate)
         {
             this.specs = specs;
             money = 100;
             faze = 1;
             towers = new Tower[0];
             enemies = new List<Enemy>();
-            this.startingEnemy = startingEnemy;
+            StartingEnemy = startingEnemy;
+            this.enemySpawnRate = enemySpawnRate;
         }
 
         public void Initialize(TileMapProfile profile)
         {
             map = new Tilemap(profile.Size, specs.TileSize, profile.TileTypes, profile.MapPosition, specs.SourceRectangles, specs.SpriteSheet);
-            startingEnemy.GridPos = map.StartingPoint;
+            StartingEnemy.Map = map;
+            StartingEnemy.GridPos = map.StartingPoint;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -56,12 +58,16 @@ namespace TowerDefense
             enemySpawnTimer += gameTime.ElapsedGameTime;
             if(enemySpawnTimer >= enemySpawnRate)
             {
-                enemies.Add(startingEnemy);
+                enemies.Add(new Enemy(StartingEnemy.Speed, StartingEnemy.Health, StartingEnemy.Scale, StartingEnemy.SourceRectangle, StartingEnemy.Texture));
+                enemies[enemies.Count - 1].Map = map;
+                enemies[enemies.Count - 1].GridPos = map.StartingPoint;
+                enemySpawnTimer = TimeSpan.Zero;
+                enemies[enemies.Count - 1].GenerateRougt();
             }
 
             for(int i = 0; i < enemies.Count; i++)
             {
-                enemies[i].Update(gameTime, map);
+                enemies[i].Update(gameTime);
                 if (enemies[i].HasReachedEnd)
                 {
                     enemies.Remove(enemies[i]);

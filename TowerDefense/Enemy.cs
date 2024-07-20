@@ -16,92 +16,104 @@ namespace TowerDefense
         public int Speed;
         private TimeSpan enemyTimer;
         public bool HasReachedEnd;
+        public Tilemap Map;
+        private PathTile[] rought;
+        private int currentPathIndex;
 
-        public Enemy(int speed, int health, Point gridPos, Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Vector2 origin, Texture2D texture)
-            : base(position, color, scale, rotation, sourceRectangle, origin, texture)
+        public Enemy(int speed, int health, Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Texture2D texture)
+            : base(position, color, scale, rotation, sourceRectangle, new Vector2(texture.Width * scale / 2, texture.Height * scale / 2), texture)
         {
             Speed = speed;
             Health = health;
-            GridPos = gridPos;
+            GridPos = Point.Zero;
             enemyTimer = TimeSpan.Zero;
         }
 
-        public Enemy(int speed, int health, Point gridPos, float scale, Rectangle sourceRectangle, Texture2D texture)
-            :this(speed, health, gridPos, new Vector2(0,0), Color.White, scale, 0, sourceRectangle, Vector2.Zero, texture)
+        public Enemy(int speed, int health, float scale, Rectangle sourceRectangle, Texture2D texture)
+            :this(speed, health, new Vector2(0,0), Color.White, scale, 0, sourceRectangle, texture)
         {
 
         }
-
-        private void ResetPathTiles(Tile[,] tiles)
+        static NodeWrapper DijstrasSelection(List<NodeWrapper> nodes)
         {
-            for(int x = 0; x < tiles.GetLength(0); x++)
+            NodeWrapper node = nodes[0];
+
+            for (int i = 0; i < nodes.Count; i++)
             {
-                for(int y = 0; y < tiles.GetLength(1); y++)
+                if (nodes[i].cumulativeDistance < node.cumulativeDistance)
                 {
-                    if (tiles[x,y] is PathTile)
-                    {
-                        ((PathTile)tiles[x, y]).cumulativeDistance = float.MaxValue;
-                        ((PathTile)tiles[x, y]).hasBeenVisited = false;
-                        ((PathTile)tiles[x, y]).Founder = null;
-                    }
+                    node = nodes[i];
                 }
             }
+            nodes.Remove(node);
+
+            return node;
         }
 
-        private PathTile[] GetShortestRougt(Tile[,] tiles, Point startingPoint, Point endingPoint)
+        private bool Contains(List<NodeWrapper> nodes, NodeWrapper node)
         {
-            ResetPathTiles(tiles);
-
-            PriorityQueue<PathTile, float> priorityQueue = new PriorityQueue<PathTile, float>();
-            ((PathTile)tiles[startingPoint.X, startingPoint.Y]).cumulativeDistance = 0;
-            priorityQueue.Enqueue((PathTile)tiles[startingPoint.X, startingPoint.Y], ((PathTile)tiles[startingPoint.X, startingPoint.Y]).cumulativeDistance);
-
-            PathTile currentVertex;
-            while (!((PathTile)tiles[endingPoint.X, endingPoint.Y]).hasBeenVisited)
+            for(int i = 0; i < nodes.Count; i++)
             {
-                currentVertex = priorityQueue.Dequeue();
-                for(int i = 0; i < currentVertex.Neighbors.Length; i++)
+                if(node.WrappedNode.GridPos == nodes[i].WrappedNode.GridPos)
                 {
-                    float tenetiveDistance = currentVertex.cumulativeDistance + 1;
-                    if (tenetiveDistance < currentVertex.Neighbors[i].cumulativeDistance)
-                    {
-                        currentVertex.Neighbors[i].cumulativeDistance = tenetiveDistance;
-                        currentVertex.Neighbors[i].Founder = currentVertex;
-                    }
-                    priorityQueue.Enqueue(currentVertex.Neighbors[i], currentVertex.Neighbors[i].cumulativeDistance);
+                    return true;
                 }
-                currentVertex.hasBeenVisited = true;
             }
-
-            List<PathTile> shortestRought = new List<PathTile>();
-
-            currentVertex = ((PathTile)tiles[endingPoint.X, endingPoint.Y]);
-            while (currentVertex != ((PathTile)tiles[startingPoint.X, startingPoint.Y]))
-            {
-                shortestRought.Add(currentVertex);
-                currentVertex = currentVertex.Founder;
-            }
-
-            shortestRought.Reverse();
-
-            return shortestRought.ToArray();
+            return false;
         }
 
-        public void Move(Tile[,] tiles, Point startingPoint, Point endingPoint)
+        public void GenerateRougt()
         {
-            GridPos = GetShortestRougt(tiles, startingPoint, endingPoint)[0].GridPos;
+            List<NodeWrapper> visitedNodes = new List<NodeWrapper>();
+            NodeWrapper currentNode = new NodeWrapper((PathTile)Map.Tiles[Map.StartingPoint.X, Map.StartingPoint.Y], 0, null);
+            List<NodeWrapper> frontier = new List<NodeWrapper>();
+
+            while (currentNode.WrappedNode.GridPos != ((PathTile)Map.Tiles[Map.EndingPoint.X, Map.EndingPoint.Y]).GridPos)
+            {
+                for (int i = 0; i < currentNode.WrappedNode.Neighbors.Length; i++)
+                {
+                    float distanceFromStart = currentNode.cumulativeDistance + 1;
+                    NodeWrapper neighbor = new NodeWrapper(currentNode.WrappedNode.Neighbors[i], distanceFromStart, currentNode);
+                    if (!Contains(visitedNodes,neighbor) && !Contains(frontier, neighbor))
+                    {
+                        frontier.Add(neighbor);
+                    }
+                }
+
+                visitedNodes.Add(currentNode);
+                currentNode = DijstrasSelection(frontier);
+            }
+
+            List<PathTile> path = new List<PathTile>();
+            while (currentNode.WrappedNode.GridPos != ((PathTile)Map.Tiles[Map.StartingPoint.X, Map.StartingPoint.Y]).GridPos)
+            {
+                path.Add(currentNode.WrappedNode);
+                currentNode = currentNode.Founder;
+            }
+            path.Add(currentNode.WrappedNode);
+            path.Reverse();
+
+            rought = path.ToArray();
+            currentPathIndex = 0;
         }
 
-        public void Update(GameTime gameTime, Tilemap tiles)
+        public void Move()
+        {
+            GridPos = rought[currentPathIndex].GridPos;
+        }
+
+        public void Update(GameTime gameTime)
         {
             enemyTimer += gameTime.ElapsedGameTime;
             if(enemyTimer.TotalMilliseconds >= Speed)
             {
-                Move(tiles.Tiles, tiles.StartingPoint, tiles.EndingPoint);
+                Move();
+                enemyTimer = TimeSpan.Zero;
+                currentPathIndex++;
             }
-            position = new Vector2(tiles.mapPosition.X + GridPos.X * tiles.Specs.TileSize.X, tiles.mapPosition.Y + GridPos.Y * tiles.Specs.TileSize.Y);
+            Position = new Vector2(Map.mapPosition.X + GridPos.X * Map.Specs.TileSize.X, Map.mapPosition.Y + GridPos.Y * Map.Specs.TileSize.Y);
 
-            if (GridPos == tiles.EndingPoint)
+            if (GridPos == Map.EndingPoint)
             {
                 HasReachedEnd = true;
             }
