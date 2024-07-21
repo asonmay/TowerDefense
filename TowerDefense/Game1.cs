@@ -76,7 +76,7 @@ namespace TowerDefense
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32, 10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
                 [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),
-                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), new Enemy(500, 100, 0.10f, sourceRectangle, enemyTexture), TimeSpan.FromSeconds(2)),
+                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), new Enemy(500, 100, 0.2f, sourceRectangle, enemyTexture), TimeSpan.FromSeconds(2)),
             };
 
             screen.Initilize(screens);

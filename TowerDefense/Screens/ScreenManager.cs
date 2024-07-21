@@ -95,7 +95,7 @@ namespace TowerDefense
 
                     ((MapEditorMenu)currentScreen).Initalize(items.ToArray());
                 }
-                if(type == ScreenTypes.Game)
+                else if(type == ScreenTypes.Game)
                 {
 
                 }
