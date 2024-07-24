@@ -19,16 +19,18 @@ namespace TowerDefense
         private TimeSpan enemySpawnTimer;
         private TimeSpan enemySpawnRate;
         public Enemy StartingEnemy;
+        private TowerShop towerShop;
 
-        public GameScreen(TileMapSpecs specs, Enemy startingEnemy, TimeSpan enemySpawnRate)
+        public GameScreen(TileMapSpecs specs, Enemy startingEnemy, TimeSpan enemySpawnRate, Tower[] towers)
         {
             this.specs = specs;
             money = 100;
             faze = 1;
-            towers = new Tower[0];
             enemies = new List<Enemy>();
             StartingEnemy = startingEnemy;
             this.enemySpawnRate = enemySpawnRate;
+
+            this.towers = towers;
         }
 
         public void Initialize(TileMapProfile profile)
@@ -46,6 +48,12 @@ namespace TowerDefense
             {
                 enemies[i].Draw(spriteBatch);
             }
+
+            for (int i = 0; i < towers.Length; i++)
+            {
+                towers[i].Draw(spriteBatch);
+            }
+
         }
 
         public override ScreenTypes ReturnType()
@@ -72,6 +80,11 @@ namespace TowerDefense
                 {
                     enemies.Remove(enemies[i]);
                 }
+            }
+
+            for(int i = 0; i < towers.Length; i++)
+            {
+                towers[i].Update(enemies.ToArray());
             }
 
             return ReturnType();

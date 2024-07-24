@@ -39,7 +39,7 @@ namespace TowerDefense
         public Sprite(Vector2 position, float scale, Texture2D texture)
             : this(position, Color.White, 1, 0, new Rectangle(0, 0, texture.Width, texture.Height), Vector2.Zero, texture) { }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, Position, SourceRectangle, color, rotation, origin, Scale, SpriteEffects.None, 1);
         }
