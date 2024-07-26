@@ -64,6 +64,8 @@ namespace TowerDefense
 
             Texture2D background = Content.Load<Texture2D>("another zanlin");
             SpriteFont titleFont = Content.Load<SpriteFont>("TitleFont");
+            SpriteFont editorFont = Content.Load<SpriteFont>("DescriptionFont");
+            Texture2D wallin = Content.Load<Texture2D>("wallin");
 
             string serializedData = File.ReadAllText("Z://Visual Studio 2022//Projects//TowerDefense//TowerDefense//bin//Debug//net6.0//SavedMaps.Json");
             savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
@@ -72,7 +74,10 @@ namespace TowerDefense
 
             Texture2D towerImage = Content.Load<Texture2D>("liz");
 
-            Tower[] towers = { new Tower(new Point(12,3), 0.1f, new Rectangle(0,0,towerImage.Width, towerImage.Height), towerImage, 100, 10, 15, towerImage, 0.05f, new Vector2(32,32), new Vector2(20,20))};
+            Tower[] towers = { 
+                new Tower(new Point(12,3), 0.1f, towerImage, 100, 15, 15, towerImage, 0.05f, new Vector2(32,32), new Vector2(20,20), TimeSpan.FromMilliseconds(1000)),
+                new Tower(new Point(12,3), 0.1f, wallin, 100, 4, 15, wallin, 0.1f, new Vector2(32,32), new Vector2(20,20), TimeSpan.FromMilliseconds(100))
+            };
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
             {
@@ -80,7 +85,7 @@ namespace TowerDefense
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32, 10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
                 [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),
-                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), new Enemy(500, 100, 0.2f, sourceRectangle, enemyTexture), TimeSpan.FromSeconds(2), towers),
+                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), new Enemy(500, 100, 0.2f, sourceRectangle, enemyTexture), TimeSpan.FromSeconds(2), towers, editorFont),
             };
 
             screen.Initilize(screens);

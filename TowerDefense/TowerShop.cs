@@ -12,14 +12,13 @@ namespace TowerDefense
     {
         public TowerShopItem[] items;
 
-        private Point position;
-
-        public TowerShop(Tower[] towers, Point position, Button buyButton, SpriteFont font, Color backColor, Point buffer)
+        public TowerShop(Tower[] towers, Point position, SpriteFont font, Color backColor)
         {
             items = new TowerShopItem[towers.Length];
             for(int i= 0; i < towers.Length; i++)
             {
-                items[i] = new TowerShopItem(towers[i], buyButton, towers[i].Cost, new Point(100 * i + buffer.X + position.X, 50 * i + buffer.Y + position.Y), backColor, font);
+                Point itemPos = new Point(position.X, (65 * i) + position.Y);
+                items[i] = new TowerShopItem(towers[i], towers[i].Cost, itemPos, backColor, font);
             }
         }
 

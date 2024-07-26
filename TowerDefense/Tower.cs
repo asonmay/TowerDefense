@@ -12,31 +12,35 @@ namespace TowerDefense
 {
     public class Tower : Sprite
     {
-        private Point GridPos;
-        private int range;
+        public Point GridPos;
+        public int Range;
         public int Cost;
         public int Damage;
-        private List<Projectile> projectiles;
-        private Texture2D projectileTexture;
-        private float projectileScale;
+        public TimeSpan FireRate;
+        public List<Projectile> Projectiles;
+        public Texture2D ProjectileTexture;
+        public float ProjectileScale;
+        public TimeSpan AttackTimer;
 
-        public Tower(Point gridPos, float scale, Rectangle sourceRectangle, Texture2D texture, int cost, int damage, int range, Texture2D projectileTexture, float projectileScale, Vector2 tileSize, Vector2 MapPosition)
-            : base(new Vector2(MapPosition.X + tileSize.X * gridPos.X, MapPosition.Y + tileSize.Y * gridPos.Y), Color.White, scale, 0, sourceRectangle, Vector2.Zero, texture)
+        public Tower(Point gridPos, float scale, Texture2D texture, int cost, int damage, int range, Texture2D projectileTexture, float projectileScale, Vector2 tileSize, Vector2 MapPosition, TimeSpan fireRate)
+            : base(new Vector2(MapPosition.X + tileSize.X * gridPos.X, MapPosition.Y + tileSize.Y * gridPos.Y), Color.White, scale, 0, new Rectangle(0,0,texture.Width,texture.Height), Vector2.Zero, texture)
         {
             Cost = cost;
             GridPos = gridPos;
             Damage = damage;
-            this.range = range;
-            this.projectileScale = projectileScale;
-            this.projectileTexture = projectileTexture;
-            projectiles = new List<Projectile>();
+            Range = range;
+            AttackTimer = TimeSpan.Zero;
+            ProjectileScale = projectileScale;
+            ProjectileTexture = projectileTexture;
+            Projectiles = new List<Projectile>();
+            FireRate = fireRate;
         }
 
         protected void Attack(Enemy[] enemies)
         {
             for(int i = 0; i < enemies.Length; i++)
             {
-                if (Math.Abs(enemies[i].GridPos.X - GridPos.X) + Math.Abs(enemies[i].GridPos.Y - GridPos.Y) <= range)
+                if (Math.Abs(enemies[i].GridPos.X - GridPos.X) + Math.Abs(enemies[i].GridPos.Y - GridPos.Y) <= Range)
                 {
                     LaunchProjectile(enemies[i]);
                 }
@@ -45,18 +49,23 @@ namespace TowerDefense
 
         private void LaunchProjectile(Enemy enemy)
         {
-            projectiles.Add(new Projectile(12, 10, Position, projectileScale, projectileTexture, enemy));
+            Projectiles.Add(new Projectile(12, Damage, Position, ProjectileScale, ProjectileTexture, enemy));
         }
 
-        public void Update(Enemy[] enemies)
+        public void Update(Enemy[] enemies, GameTime gametime)
         {
-            Attack(enemies);
-
-            for(int i = 0; i < projectiles.Count; i++)
+            AttackTimer += gametime.ElapsedGameTime;
+            if(AttackTimer > FireRate)
             {
-                if (projectiles[i].Update())
+                Attack(enemies);
+                AttackTimer = TimeSpan.Zero;
+            }
+
+            for(int i = 0; i < Projectiles.Count; i++)
+            {
+                if (Projectiles[i].Update())
                 {
-                    projectiles.RemoveAt(i);
+                    Projectiles.RemoveAt(i);
                 }
             }
         }
@@ -64,9 +73,9 @@ namespace TowerDefense
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            for (int i = 0; i < projectiles.Count; i++)
+            for (int i = 0; i < Projectiles.Count; i++)
             {
-                projectiles[i].Draw(spriteBatch);
+                Projectiles[i].Draw(spriteBatch);
             }
         }
     }

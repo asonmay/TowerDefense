@@ -227,13 +227,17 @@ namespace TowerDefense
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Point hovorPos)
         {
             for(int x = 0; x < size.X; x++)
             {
                 for(int y = 0; y < size.Y; y++)
                 {
                     Tiles[x, y].Draw(spriteBatch);
+                    if (new Point(x, y) == hovorPos)
+                    {
+                        spriteBatch.DrawRectangle(new Rectangle(Tiles[x, y].Position.ToPoint(), Specs.TileSize), Color.Red);
+                    }
                 }
             }
         }

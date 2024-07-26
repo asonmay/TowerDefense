@@ -32,6 +32,13 @@
 /processorParam:TextureFormat=Compressed
 /build:ButtonFont.spritefont
 
+#begin DescriptionFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:DescriptionFont.spritefont
+
 #begin FieldsTileset.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -75,7 +82,7 @@
 /processorParam:TextureFormat=Compressed
 /build:TitleFont.spritefont
 
-#begin wallin.jpg
+#begin wallin.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -85,5 +92,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:wallin.jpg
+/build:wallin.png
 
