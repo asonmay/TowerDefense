@@ -107,7 +107,7 @@ namespace TowerDefense
             
             if(Mouse.GetState().LeftButton == ButtonState.Pressed && hoverPos.X < int.MaxValue && selectedTower != null)
             {
-                currentTowers.Add(new Tower(hoverPos, selectedTower.Scale, selectedTower.Texture, selectedTower.Cost, selectedTower.Damage, selectedTower.Range, selectedTower.ProjectileTexture, selectedTower.ProjectileScale, map.Specs.TileSize.ToVector2(), map.mapPosition, selectedTower.FireRate));
+                currentTowers.Add(selectedTower.GetTower(hoverPos, map.Specs.TileSize, map.mapPosition));
                 selectedTower = null;
             }
 

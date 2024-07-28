@@ -34,6 +34,7 @@ namespace TowerDefense
         {
 
         }
+
         static NodeWrapper DijstrasSelection(List<NodeWrapper> nodes)
         {
             NodeWrapper node = nodes[0];

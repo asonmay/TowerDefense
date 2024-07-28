@@ -65,18 +65,26 @@ namespace TowerDefense
             Texture2D background = Content.Load<Texture2D>("another zanlin");
             SpriteFont titleFont = Content.Load<SpriteFont>("TitleFont");
             SpriteFont editorFont = Content.Load<SpriteFont>("DescriptionFont");
-            Texture2D wallin = Content.Load<Texture2D>("wallin");
+            Texture2D wailin = Content.Load<Texture2D>("wallin");
 
-            string serializedData = File.ReadAllText("Z://Visual Studio 2022//Projects//TowerDefense//TowerDefense//bin//Debug//net6.0//SavedMaps.Json");
+            string serializedData = File.ReadAllText("SavedMaps.Json");
             savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
             Texture2D enemyTexture = Content.Load<Texture2D>("another zanlin");
             Rectangle sourceRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);
+            Texture2D ariana = Content.Load<Texture2D>("ariana");
+            Texture2D liz = Content.Load<Texture2D>("liz");
+            Texture2D baldHakop = Content.Load<Texture2D>("BaldHakop");
+            Texture2D hakopCat = Content.Load<Texture2D>("HakopCat");
+            Texture2D niketaBall = Content.Load<Texture2D>("NikitaBall");
+            Texture2D nekita = Content.Load<Texture2D>("NikitaPhillistine");
 
-            Texture2D towerImage = Content.Load<Texture2D>("liz");
-
-            Tower[] towers = { 
-                new Tower(new Point(12,3), 0.1f, towerImage, 100, 15, 15, towerImage, 0.05f, new Vector2(32,32), new Vector2(20,20), TimeSpan.FromMilliseconds(1000)),
-                new Tower(new Point(12,3), 0.1f, wallin, 100, 4, 15, wallin, 0.1f, new Vector2(32,32), new Vector2(20,20), TimeSpan.FromMilliseconds(100))
+            Tower[] towers = 
+            {
+                new ShooterTower(15, 5, wailin, 0.1f, 20, Point.Zero, TimeSpan.FromMilliseconds(200), wailin, new Point(32,32), 0.15f, new Vector2(20,20)),
+                new ShooterTower(15, 15, liz, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), liz, new Point(32,32), 0.1f, new Vector2(20,20)),
+                new ShooterTower(15, 150, ariana, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(5000), ariana, new Point(32,32), 0.1f, new Vector2(20,20)),
+                new ShooterTower(15, 15, baldHakop, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), hakopCat, new Point(32,32), 0.1f, new Vector2(20,20)),
+                new ShooterTower(15, 15, niketaBall, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), nekita, new Point(32,32), 0.1f, new Vector2(20,20)),
             };
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
@@ -85,7 +93,7 @@ namespace TowerDefense
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32, 10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
                 [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),
-                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), new Enemy(500, 100, 0.2f, sourceRectangle, enemyTexture), TimeSpan.FromSeconds(2), towers, editorFont),
+                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), new Enemy(500, 200, 0.2f, sourceRectangle, enemyTexture), TimeSpan.FromMilliseconds(1250), towers, editorFont),
             };
 
             screen.Initilize(screens);

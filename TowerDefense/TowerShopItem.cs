@@ -36,7 +36,6 @@ namespace TowerDefense
             spriteBatch.Draw(DefaultTower.Texture, new Vector2(position.X + 5, position.Y + 5), DefaultTower.SourceRectangle, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 1);
             float startingPos = position.X + 10 + (DefaultTower.Texture.Width * scale);
             spriteBatch.DrawString(font, $"Cost: {cost}", new Vector2(startingPos, position.Y + 5), Color.Black);
-            spriteBatch.DrawString(font, $"Damage: {DefaultTower.Damage}", new Vector2(startingPos, position.Y + 5 + font.MeasureString("L").Y), Color.Black);
             BuyButton.Draw(spriteBatch);
         }
     }

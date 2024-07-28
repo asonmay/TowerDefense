@@ -10,73 +10,33 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
-    public class Tower : Sprite
+    public abstract class Tower : Sprite
     {
         public Point GridPos;
-        public int Range;
         public int Cost;
-        public int Damage;
-        public TimeSpan FireRate;
-        public List<Projectile> Projectiles;
-        public Texture2D ProjectileTexture;
-        public float ProjectileScale;
-        public TimeSpan AttackTimer;
+        private TimeSpan actionTimer;
+        protected TimeSpan ActionRate;
 
-        public Tower(Point gridPos, float scale, Texture2D texture, int cost, int damage, int range, Texture2D projectileTexture, float projectileScale, Vector2 tileSize, Vector2 MapPosition, TimeSpan fireRate)
-            : base(new Vector2(MapPosition.X + tileSize.X * gridPos.X, MapPosition.Y + tileSize.Y * gridPos.Y), Color.White, scale, 0, new Rectangle(0,0,texture.Width,texture.Height), Vector2.Zero, texture)
+        public Tower(Point gridPos, float scale, Texture2D texture, Vector2 tileSize, Vector2 MapPosition, TimeSpan actionRate)
+            : base(new Vector2(MapPosition.X + tileSize.X * gridPos.X, MapPosition.Y + tileSize.Y * gridPos.Y), Color.White, scale, 0, new Rectangle(0, 0, texture.Width, texture.Height), Vector2.Zero, texture)
         {
-            Cost = cost;
+            actionTimer = TimeSpan.Zero;
+            ActionRate = actionRate;
             GridPos = gridPos;
-            Damage = damage;
-            Range = range;
-            AttackTimer = TimeSpan.Zero;
-            ProjectileScale = projectileScale;
-            ProjectileTexture = projectileTexture;
-            Projectiles = new List<Projectile>();
-            FireRate = fireRate;
         }
 
-        protected void Attack(Enemy[] enemies)
+        protected abstract void Activate(Enemy[] enemies);
+
+        public virtual void Update(Enemy[] enemies, GameTime gametime)
         {
-            for(int i = 0; i < enemies.Length; i++)
+            actionTimer += gametime.ElapsedGameTime;
+            if (actionTimer > ActionRate)
             {
-                if (Math.Abs(enemies[i].GridPos.X - GridPos.X) + Math.Abs(enemies[i].GridPos.Y - GridPos.Y) <= Range)
-                {
-                    LaunchProjectile(enemies[i]);
-                }
+                Activate(enemies);
+                actionTimer = TimeSpan.Zero;
             }
         }
 
-        private void LaunchProjectile(Enemy enemy)
-        {
-            Projectiles.Add(new Projectile(12, Damage, Position, ProjectileScale, ProjectileTexture, enemy));
-        }
-
-        public void Update(Enemy[] enemies, GameTime gametime)
-        {
-            AttackTimer += gametime.ElapsedGameTime;
-            if(AttackTimer > FireRate)
-            {
-                Attack(enemies);
-                AttackTimer = TimeSpan.Zero;
-            }
-
-            for(int i = 0; i < Projectiles.Count; i++)
-            {
-                if (Projectiles[i].Update())
-                {
-                    Projectiles.RemoveAt(i);
-                }
-            }
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
-            for (int i = 0; i < Projectiles.Count; i++)
-            {
-                Projectiles[i].Draw(spriteBatch);
-            }
-        }
+        public abstract Tower GetTower(Point gridPos, Point tileSize, Vector2 mapPosition);
     }
 }
