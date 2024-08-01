@@ -80,11 +80,17 @@ namespace TowerDefense
 
             Tower[] towers = 
             {
-                new ShooterTower(15, 5, wailin, 0.1f, 20, Point.Zero, TimeSpan.FromMilliseconds(200), wailin, new Point(32,32), 0.15f, new Vector2(20,20)),
-                new ShooterTower(15, 15, liz, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), liz, new Point(32,32), 0.1f, new Vector2(20,20)),
-                new ShooterTower(15, 150, ariana, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(5000), ariana, new Point(32,32), 0.1f, new Vector2(20,20)),
-                new ShooterTower(15, 15, baldHakop, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), hakopCat, new Point(32,32), 0.1f, new Vector2(20,20)),
-                new ShooterTower(15, 15, niketaBall, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), nekita, new Point(32,32), 0.1f, new Vector2(20,20)),
+                new ShooterTower(15, 5, wailin, 0.1f, 20, Point.Zero, TimeSpan.FromMilliseconds(200), wailin, new Point(32,32), 0.15f, new Vector2(20,20), 40),
+                new ShooterTower(15, 15, liz, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), liz, new Point(32,32), 0.1f, new Vector2(20,20),25),
+                new ShooterTower(15, 150, ariana, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(5000), ariana, new Point(32,32), 0.1f, new Vector2(20,20),60),
+                new ShooterTower(15, 25, baldHakop, 0.08f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), hakopCat, new Point(32,32), 0.08f, new Vector2(20,20), 30),
+                new ShooterTower(15, 25, niketaBall, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), nekita, new Point(32,32), 0.025f, new Vector2(20,20), 30),
+            };
+
+            Enemy[] enemys =
+            {
+                new Enemy(500, 200, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 5),
+                new Enemy(500, 400, 0.4f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 15),
             };
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
@@ -92,12 +98,13 @@ namespace TowerDefense
                 [ScreenTypes.HomeScreen] = new HomeScreen(background, new Point(100, 500), new Point(200, 500), Color.Red, Color.Red, buttonFont, background, titleFont, GraphicsDevice.Viewport),
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32, 10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
-                [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),
-                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), new Enemy(500, 200, 0.2f, sourceRectangle, enemyTexture), TimeSpan.FromMilliseconds(1250), towers, editorFont),
-            };
+                [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),                
+                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), enemys, TimeSpan.FromMilliseconds(1250), towers, editorFont),
+            };        
 
             screen.Initilize(screens);
         }
+
 
         protected override void Update(GameTime gameTime)
         {

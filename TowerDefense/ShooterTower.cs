@@ -18,8 +18,8 @@ namespace TowerDefense
         private float projectileScale;
         private int projectileSpeed;
 
-        public ShooterTower(int range, int damage, Texture2D projectileTexture, float projectileScale, int projectileSpeed, Point gridPos, TimeSpan actionRate, Texture2D texture, Point tileSize, float scale, Vector2 mapPostion)
-            : base(gridPos, scale, texture, tileSize.ToVector2(), mapPostion, actionRate)
+        public ShooterTower(int range, int damage, Texture2D projectileTexture, float projectileScale, int projectileSpeed, Point gridPos, TimeSpan actionRate, Texture2D texture, Point tileSize, float scale, Vector2 mapPostion, int cost)
+            : base(gridPos, scale, texture, tileSize.ToVector2(), mapPostion, actionRate, cost)
         {
             this.range = range;
             Damage = damage;
@@ -69,7 +69,7 @@ namespace TowerDefense
 
         public override Tower GetTower(Point gridPos, Point tileSize, Vector2 mapPosition)
         {
-            return new ShooterTower(range, Damage, projectileTexture, projectileScale, projectileSpeed, gridPos, ActionRate, Texture, tileSize, Scale, mapPosition);
+            return new ShooterTower(range, Damage, projectileTexture, projectileScale, projectileSpeed, gridPos, ActionRate, Texture, tileSize, Scale, mapPosition, Cost);
         }
     }
 }

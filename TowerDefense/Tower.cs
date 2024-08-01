@@ -17,11 +17,12 @@ namespace TowerDefense
         private TimeSpan actionTimer;
         protected TimeSpan ActionRate;
 
-        public Tower(Point gridPos, float scale, Texture2D texture, Vector2 tileSize, Vector2 MapPosition, TimeSpan actionRate)
+        public Tower(Point gridPos, float scale, Texture2D texture, Vector2 tileSize, Vector2 MapPosition, TimeSpan actionRate, int cost)
             : base(new Vector2(MapPosition.X + tileSize.X * gridPos.X, MapPosition.Y + tileSize.Y * gridPos.Y), Color.White, scale, 0, new Rectangle(0, 0, texture.Width, texture.Height), Vector2.Zero, texture)
         {
             actionTimer = TimeSpan.Zero;
             ActionRate = actionRate;
+            Cost = cost;
             GridPos = gridPos;
         }
 

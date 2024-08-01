@@ -16,7 +16,7 @@ namespace TowerDefense
         private Color color;
         private string text;
         private Point position;
-        private SpriteFont font;
+        public SpriteFont Font;
         private Color textColor;
 
         public Button( Color color, string text, Point position, SpriteFont font, Color textColor)
@@ -25,7 +25,7 @@ namespace TowerDefense
             this.color = color;
             this.text = text;
             this.position = position;
-            this.font = font;
+            this.Font = font;
             this.textColor = textColor;
         }
 
@@ -39,7 +39,7 @@ namespace TowerDefense
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.FillRectangle(new Rectangle(position, size), color);
-            spriteBatch.DrawString(font, text, new Vector2(position.X + 5, position.Y + 5), textColor);
+            spriteBatch.DrawString(Font, text, new Vector2(position.X + 5, position.Y + 5), textColor);
         }
     }
 }

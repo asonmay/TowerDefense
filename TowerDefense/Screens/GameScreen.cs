@@ -20,31 +20,38 @@ namespace TowerDefense
         private TileMapSpecs specs;
         private TimeSpan enemySpawnTimer;
         private TimeSpan enemySpawnRate;
-        public Enemy StartingEnemy;
+        public Enemy[] EnemyQueue;
         private TowerShop towerShop;
         private SpriteFont font;
         private Tower selectedTower;
         private List<Tower> currentTowers;
         private Point hoverPos;
+        private int enemyindex;
 
-        public GameScreen(TileMapSpecs specs, Enemy startingEnemy, TimeSpan enemySpawnRate, Tower[] towers, SpriteFont font)
+        public GameScreen(TileMapSpecs specs, Enemy[] startingEnemy, TimeSpan enemySpawnRate, Tower[] towers, SpriteFont font)
         {
             this.specs = specs;
             money = 100;
             faze = 1;
             enemies = new List<Enemy>();
-            StartingEnemy = startingEnemy;
+            EnemyQueue = startingEnemy;
             this.enemySpawnRate = enemySpawnRate;
             this.font = font;
             this.towers = towers;
             currentTowers = new List<Tower>();
+            enemyindex = 0;
         }
 
         public void Initialize(TileMapProfile profile)
         {
             map = new Tilemap(profile.Size, specs.TileSize, profile.TileTypes, profile.MapPosition, specs.SourceRectangles, specs.SpriteSheet);
-            StartingEnemy.Map = map;
-            StartingEnemy.GridPos = map.StartingPoint;
+
+            for(int i = 0; i < EnemyQueue.Length; i++)
+            {
+                EnemyQueue[i].Map = map;
+                EnemyQueue[i].GridPos = map.StartingPoint;
+            }
+           
             towerShop = new TowerShop(towers.ToArray(), new Point((int)(map.mapPosition.X + (specs.TileSize.X * map.size.X) + 5), (int)map.mapPosition.Y), font, Color.Green);
         }
 
@@ -62,6 +69,8 @@ namespace TowerDefense
                 currentTowers[i].Draw(spriteBatch);
             }
 
+            spriteBatch.DrawString(towerShop.items[0].BuyButton.Font, $"Money: {money}", new Vector2(map.mapPosition.X, 0), Color.White);
+
             towerShop.Draw(spriteBatch);
         }
 
@@ -74,13 +83,19 @@ namespace TowerDefense
         {
             hoverPos = getHovorPos();
             enemySpawnTimer += gameTime.ElapsedGameTime;
+
             if(enemySpawnTimer >= enemySpawnRate)
             {
-                enemies.Add(new Enemy(StartingEnemy.Speed, StartingEnemy.Health, StartingEnemy.Scale, StartingEnemy.SourceRectangle, StartingEnemy.Texture));
+                enemies.Add(new Enemy(EnemyQueue[enemyindex].Speed, EnemyQueue[enemyindex].Health, EnemyQueue[enemyindex].Scale, EnemyQueue[enemyindex].SourceRectangle, EnemyQueue[enemyindex].Texture, EnemyQueue[enemyindex].Reward));
                 enemies[enemies.Count - 1].Map = map;
                 enemies[enemies.Count - 1].GridPos = map.StartingPoint;
                 enemySpawnTimer = TimeSpan.Zero;
                 enemies[enemies.Count - 1].GenerateRougt();
+                enemyindex++;
+                if (enemyindex >= EnemyQueue.Length)
+                {
+                    enemyindex = 0;
+                }
             }
 
             for(int i = 0; i < enemies.Count; i++)
@@ -88,6 +103,7 @@ namespace TowerDefense
                 enemies[i].Update(gameTime);
                 if (enemies[i].HasReachedEnd || enemies[i].Health <= 0)
                 {
+                    money += enemies[i].Reward;
                     enemies.Remove(enemies[i]);
                 }
             }
@@ -97,11 +113,15 @@ namespace TowerDefense
                 currentTowers[i].Update(enemies.ToArray(), gameTime);
             }
 
-            for(int i = 0; i < towerShop.items.Length; i++)
+            if(selectedTower == null)
             {
-                if (towerShop.items[i].BuyButton.isClicked())
+                for (int i = 0; i < towerShop.items.Length; i++)
                 {
-                    selectedTower = towerShop.items[i].DefaultTower;
+                    if (towerShop.items[i].BuyButton.isClicked() && money - towerShop.items[i].DefaultTower.Cost >= 0)
+                    {
+                        selectedTower = towerShop.items[i].DefaultTower;
+                        money -= selectedTower.Cost;
+                    }
                 }
             }
             

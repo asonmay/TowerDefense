@@ -9,6 +9,13 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
+    public enum EnemyType
+    {
+        NormalZanlin,
+        MadZanlin,
+        HappyZanlin,
+    }
+
     public class Enemy : Sprite
     {
         public int Health { get; set; }
@@ -19,18 +26,20 @@ namespace TowerDefense
         public Tilemap Map;
         private PathTile[] rought;
         private int currentPathIndex;
+        public int Reward;
 
-        public Enemy(int speed, int health, Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Texture2D texture)
+        public Enemy(int speed, int health, Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Texture2D texture, int reward)
             : base(position, color, scale, rotation, sourceRectangle, new Vector2(texture.Width * scale / 2, texture.Height * scale / 2), texture)
         {
             Speed = speed;
             Health = health;
             GridPos = Point.Zero;
             enemyTimer = TimeSpan.Zero;
+            this.Reward = reward;
         }
 
-        public Enemy(int speed, int health, float scale, Rectangle sourceRectangle, Texture2D texture)
-            :this(speed, health, new Vector2(0,0), Color.White, scale, 0, sourceRectangle, texture)
+        public Enemy(int speed, int health, float scale, Rectangle sourceRectangle, Texture2D texture, int reward)
+            :this(speed, health, new Vector2(0,0), Color.White, scale, 0, sourceRectangle, texture, reward)
         {
 
         }
