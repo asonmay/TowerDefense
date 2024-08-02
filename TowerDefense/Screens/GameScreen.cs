@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TowerDefense.Screens;
 
 namespace TowerDefense
 {
@@ -27,8 +28,13 @@ namespace TowerDefense
         private List<Tower> currentTowers;
         private Point hoverPos;
         private int enemyindex;
+        private TimeSpan nextWaveRate;
+        private TimeSpan waveTimer;
+        public int EndHealth { get; private set; }
 
-        public GameScreen(TileMapSpecs specs, Enemy[] startingEnemy, TimeSpan enemySpawnRate, Tower[] towers, SpriteFont font)
+        public GameStats stats;
+
+        public GameScreen(TileMapSpecs specs, Enemy[] startingEnemy, TimeSpan enemySpawnRate, Tower[] towers, SpriteFont font, int endHealth, TimeSpan nextWaveRate)
         {
             this.specs = specs;
             money = 100;
@@ -40,6 +46,10 @@ namespace TowerDefense
             this.towers = towers;
             currentTowers = new List<Tower>();
             enemyindex = 0;
+            EndHealth = endHealth;
+            stats = new GameStats(0, 0, 0, 0);
+            this.nextWaveRate = nextWaveRate;
+            waveTimer = TimeSpan.Zero;
         }
 
         public void Initialize(TileMapProfile profile)
@@ -51,7 +61,7 @@ namespace TowerDefense
                 EnemyQueue[i].Map = map;
                 EnemyQueue[i].GridPos = map.StartingPoint;
             }
-           
+            
             towerShop = new TowerShop(towers.ToArray(), new Point((int)(map.mapPosition.X + (specs.TileSize.X * map.size.X) + 5), (int)map.mapPosition.Y), font, Color.Green);
         }
 
@@ -81,29 +91,38 @@ namespace TowerDefense
 
         public override ScreenTypes Update(GameTime gameTime)
         {
-            hoverPos = getHovorPos();
+            waveTimer += gameTime.ElapsedGameTime;
+            if(waveTimer >= nextWaveRate)
+            {
+                waveTimer = TimeSpan.Zero;
+                if(enemyindex + 1 < EnemyQueue.Length)
+                {
+                    enemyindex++;
+                }
+                enemySpawnRate -= TimeSpan.FromMilliseconds(150);
+            }
+
+            hoverPos = GetHovorPos();
             enemySpawnTimer += gameTime.ElapsedGameTime;
 
-            if(enemySpawnTimer >= enemySpawnRate)
+            if(EndHealth <= 0)
             {
-                enemies.Add(new Enemy(EnemyQueue[enemyindex].Speed, EnemyQueue[enemyindex].Health, EnemyQueue[enemyindex].Scale, EnemyQueue[enemyindex].SourceRectangle, EnemyQueue[enemyindex].Texture, EnemyQueue[enemyindex].Reward));
-                enemies[enemies.Count - 1].Map = map;
-                enemies[enemies.Count - 1].GridPos = map.StartingPoint;
-                enemySpawnTimer = TimeSpan.Zero;
-                enemies[enemies.Count - 1].GenerateRougt();
-                enemyindex++;
-                if (enemyindex >= EnemyQueue.Length)
-                {
-                    enemyindex = 0;
-                }
+                return ScreenTypes.GameOver;
             }
+
+            SpawnEnemies();
 
             for(int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].Update(gameTime);
-                if (enemies[i].HasReachedEnd || enemies[i].Health <= 0)
+                if (enemies[i].Health <= 0)
                 {
                     money += enemies[i].Reward;
+                    enemies.Remove(enemies[i]);
+                }
+                else if (enemies[i].HasReachedEnd)
+                {
+                    EndHealth -= 20;
                     enemies.Remove(enemies[i]);
                 }
             }
@@ -134,7 +153,22 @@ namespace TowerDefense
             return ReturnType();
         }
 
-        public Point getHovorPos()
+        private void SpawnEnemies()
+        {
+            if (enemySpawnTimer >= enemySpawnRate)
+            {
+                enemies.Add(new Enemy(EnemyQueue[enemyindex].Speed, EnemyQueue[enemyindex].Health, EnemyQueue[enemyindex].Scale, EnemyQueue[enemyindex].SourceRectangle, EnemyQueue[enemyindex].Texture, EnemyQueue[enemyindex].Reward));
+                enemies[enemies.Count - 1].Map = map;
+                enemies[enemies.Count - 1].GridPos = map.StartingPoint;
+                enemySpawnTimer = TimeSpan.Zero;
+                enemies[enemies.Count - 1].GenerateRougt();
+                if (enemyindex >= EnemyQueue.Length)
+                {
+                    enemyindex = 0;
+                }
+            }
+        }
+        public Point GetHovorPos()
         {
             for(int x = 0; x < map.Tiles.GetLength(0); x++)
             {

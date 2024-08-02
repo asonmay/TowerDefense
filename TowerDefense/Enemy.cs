@@ -35,7 +35,7 @@ namespace TowerDefense
             Health = health;
             GridPos = Point.Zero;
             enemyTimer = TimeSpan.Zero;
-            this.Reward = reward;
+            Reward = reward;
         }
 
         public Enemy(int speed, int health, float scale, Rectangle sourceRectangle, Texture2D texture, int reward)
@@ -127,11 +127,6 @@ namespace TowerDefense
             {
                 HasReachedEnd = true;
             }
-        }
-
-        public void Draw()
-        {
-
         }
     }
 }

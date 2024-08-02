@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using TowerDefense.Screens;
 
 //https://free-game-assets.itch.io/free-field-enemies-pixel-art-for-tower-defense
 //https://free-game-assets.itch.io/free-archer-towers-pixel-art-for-tower-defense
@@ -69,6 +70,7 @@ namespace TowerDefense
 
             string serializedData = File.ReadAllText("SavedMaps.Json");
             savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
+
             Texture2D enemyTexture = Content.Load<Texture2D>("another zanlin");
             Rectangle sourceRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);
             Texture2D ariana = Content.Load<Texture2D>("ariana");
@@ -82,7 +84,7 @@ namespace TowerDefense
             {
                 new ShooterTower(15, 5, wailin, 0.1f, 20, Point.Zero, TimeSpan.FromMilliseconds(200), wailin, new Point(32,32), 0.15f, new Vector2(20,20), 40),
                 new ShooterTower(15, 15, liz, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), liz, new Point(32,32), 0.1f, new Vector2(20,20),25),
-                new ShooterTower(15, 150, ariana, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(5000), ariana, new Point(32,32), 0.1f, new Vector2(20,20),60),
+                new ShooterTower(15, 10000, ariana, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(7000), ariana, new Point(32,32), 0.1f, new Vector2(20,20),200),
                 new ShooterTower(15, 25, baldHakop, 0.08f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), hakopCat, new Point(32,32), 0.08f, new Vector2(20,20), 30),
                 new ShooterTower(15, 25, niketaBall, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), nekita, new Point(32,32), 0.025f, new Vector2(20,20), 30),
             };
@@ -90,7 +92,10 @@ namespace TowerDefense
             Enemy[] enemys =
             {
                 new Enemy(500, 200, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 5),
-                new Enemy(500, 400, 0.4f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 15),
+                new Enemy(400, 400, 0.4f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 15),
+                new Enemy(300, 600, Vector2.Zero, Color.White, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25),
+                new Enemy(200, 600, Vector2.Zero, Color.Purple, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25),
+                new Enemy(100, 600, Vector2.Zero, Color.Purple, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25),
             };
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
@@ -99,7 +104,8 @@ namespace TowerDefense
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32, 10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
                 [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),                
-                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), enemys, TimeSpan.FromMilliseconds(1250), towers, editorFont),
+                [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), enemys, TimeSpan.FromMilliseconds(1250), towers, editorFont, 100, TimeSpan.FromSeconds(20)),
+                [ScreenTypes.GameOver] = new GameOverScreen(titleFont, GraphicsDevice.Viewport, editorFont)
             };        
 
             screen.Initilize(screens);

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using TowerDefense.Screens;
 
 namespace TowerDefense
 {
@@ -19,6 +20,7 @@ namespace TowerDefense
         MapEditor,
         MapEditorMenu,
         GameScreen,
+        GameOver,
     }
     public class ScreenManager
     {
@@ -95,9 +97,9 @@ namespace TowerDefense
 
                     ((MapEditorMenu)currentScreen).Initalize(items.ToArray());
                 }
-                else if(type == ScreenTypes.Game)
+                else if(type == ScreenTypes.GameOver)
                 {
-
+                    ((GameOverScreen)currentScreen).Init(((GameScreen)lastScreen).stats);
                 }
             }
         }
