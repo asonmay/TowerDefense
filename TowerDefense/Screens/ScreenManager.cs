@@ -99,7 +99,7 @@ namespace TowerDefense
                 }
                 else if(type == ScreenTypes.GameOver)
                 {
-                    ((GameOverScreen)currentScreen).Init(((GameScreen)lastScreen).stats);
+                    ((GameOverScreen)currentScreen).Init(((GameScreen)lastScreen).stats, ((GameScreen)lastScreen).DidWin);
                 }
             }
         }

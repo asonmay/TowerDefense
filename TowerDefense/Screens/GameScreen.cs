@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +18,6 @@ namespace TowerDefense
         private int money;
         private Tower[] towers;
         private List<Enemy> enemies;
-        private int faze;
         private TileMapSpecs specs;
         private TimeSpan enemySpawnTimer;
         private TimeSpan enemySpawnRate;
@@ -33,35 +33,35 @@ namespace TowerDefense
         public int EndHealth { get; private set; }
 
         public GameStats stats;
+        public bool DidWin { get; private set; }
 
         public GameScreen(TileMapSpecs specs, Enemy[] startingEnemy, TimeSpan enemySpawnRate, Tower[] towers, SpriteFont font, int endHealth, TimeSpan nextWaveRate)
         {
-            this.specs = specs;
-            money = 100;
-            faze = 1;
-            enemies = new List<Enemy>();
+            this.specs = specs;         
             EnemyQueue = startingEnemy;
             this.enemySpawnRate = enemySpawnRate;
             this.font = font;
             this.towers = towers;
-            currentTowers = new List<Tower>();
-            enemyindex = 0;
-            EndHealth = endHealth;
-            stats = new GameStats(0, 0, 0, 0);
             this.nextWaveRate = nextWaveRate;
             waveTimer = TimeSpan.Zero;
+            DidWin = false;
         }
 
         public void Initialize(TileMapProfile profile)
         {
             map = new Tilemap(profile.Size, specs.TileSize, profile.TileTypes, profile.MapPosition, specs.SourceRectangles, specs.SpriteSheet);
-
             for(int i = 0; i < EnemyQueue.Length; i++)
             {
                 EnemyQueue[i].Map = map;
                 EnemyQueue[i].GridPos = map.StartingPoint;
             }
-            
+            currentTowers = new List<Tower>();
+            money = 100;
+            enemies = new List<Enemy>();
+            enemyindex = 0;
+            EndHealth = 100;
+            stats = new GameStats(0, 0, 0, 0);
+            DidWin = false;
             towerShop = new TowerShop(towers.ToArray(), new Point((int)(map.mapPosition.X + (specs.TileSize.X * map.size.X) + 5), (int)map.mapPosition.Y), font, Color.Green);
         }
 
@@ -99,6 +99,11 @@ namespace TowerDefense
                 {
                     enemyindex++;
                 }
+                else
+                {
+                    DidWin = true;
+                    return ScreenTypes.GameOver;
+                }
                 enemySpawnRate -= TimeSpan.FromMilliseconds(150);
             }
 
@@ -107,6 +112,7 @@ namespace TowerDefense
 
             if(EndHealth <= 0)
             {
+                DidWin = false;
                 return ScreenTypes.GameOver;
             }
 
@@ -119,6 +125,7 @@ namespace TowerDefense
                 {
                     money += enemies[i].Reward;
                     enemies.Remove(enemies[i]);
+                    stats.EnemiesKilled++;
                 }
                 else if (enemies[i].HasReachedEnd)
                 {
@@ -144,7 +151,7 @@ namespace TowerDefense
                 }
             }
             
-            if(Mouse.GetState().LeftButton == ButtonState.Pressed && hoverPos.X < int.MaxValue && selectedTower != null)
+            if(Mouse.GetState().LeftButton == ButtonState.Pressed && hoverPos.X < int.MaxValue && selectedTower != null && map.Tiles[hoverPos.X, hoverPos.Y].Type == TileTypes.Grass && !DoesHaveTile(hoverPos))
             {
                 currentTowers.Add(selectedTower.GetTower(hoverPos, map.Specs.TileSize, map.mapPosition));
                 selectedTower = null;
@@ -152,12 +159,24 @@ namespace TowerDefense
 
             return ReturnType();
         }
+        
+        private bool DoesHaveTile(Point pos)
+        {
+            for(int i = 0; i < currentTowers.Count; i++)
+            {
+                if (currentTowers[i].GridPos == pos)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private void SpawnEnemies()
         {
             if (enemySpawnTimer >= enemySpawnRate)
             {
-                enemies.Add(new Enemy(EnemyQueue[enemyindex].Speed, EnemyQueue[enemyindex].Health, EnemyQueue[enemyindex].Scale, EnemyQueue[enemyindex].SourceRectangle, EnemyQueue[enemyindex].Texture, EnemyQueue[enemyindex].Reward));
+                enemies.Add(new Enemy(EnemyQueue[enemyindex].Speed, EnemyQueue[enemyindex].Health, EnemyQueue[enemyindex].Scale, EnemyQueue[enemyindex].SourceRectangle, EnemyQueue[enemyindex].Texture, EnemyQueue[enemyindex].Reward, EnemyQueue[enemyindex].Name));
                 enemies[enemies.Count - 1].Map = map;
                 enemies[enemies.Count - 1].GridPos = map.StartingPoint;
                 enemySpawnTimer = TimeSpan.Zero;

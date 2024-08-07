@@ -41,11 +41,7 @@ namespace TowerDefense
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            screen = ScreenManager.Instance;
-            buttonFont = Content.Load<SpriteFont>("ButtonFont");
-
-            Texture2D spriteSheet = Content.Load<Texture2D>("FieldsTileset");
+            screen = ScreenManager.Instance;    
 
             Dictionary<TileTypes, Rectangle> sourceRectangles = new Dictionary<TileTypes, Rectangle>
             {
@@ -63,22 +59,32 @@ namespace TowerDefense
                 [TileTypes.Down] = new Rectangle(64, 0, 32, 32),
             };
 
-            Texture2D background = Content.Load<Texture2D>("another zanlin");
-            SpriteFont titleFont = Content.Load<SpriteFont>("TitleFont");
-            SpriteFont editorFont = Content.Load<SpriteFont>("DescriptionFont");
-            Texture2D wailin = Content.Load<Texture2D>("wallin");
-
             string serializedData = File.ReadAllText("SavedMaps.Json");
             savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
 
+            Texture2D background = Content.Load<Texture2D>("another zanlin");
+            Texture2D spriteSheet = Content.Load<Texture2D>("FieldsTileset");
+
+            //Fonts
+            SpriteFont titleFont = Content.Load<SpriteFont>("TitleFont");
+            SpriteFont editorFont = Content.Load<SpriteFont>("DescriptionFont");
+            SpriteFont statsFont = Content.Load<SpriteFont>("StatsFont");
+            buttonFont = Content.Load<SpriteFont>("ButtonFont");
+
+            //Enemy Images
             Texture2D enemyTexture = Content.Load<Texture2D>("another zanlin");
-            Rectangle sourceRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);
+            Texture2D baldZanlin = Content.Load<Texture2D>("happierZanlin");
+
+            //Tower Images
+            Texture2D wailin = Content.Load<Texture2D>("wallin");
             Texture2D ariana = Content.Load<Texture2D>("ariana");
             Texture2D liz = Content.Load<Texture2D>("liz");
             Texture2D baldHakop = Content.Load<Texture2D>("BaldHakop");
             Texture2D hakopCat = Content.Load<Texture2D>("HakopCat");
             Texture2D niketaBall = Content.Load<Texture2D>("NikitaBall");
             Texture2D nekita = Content.Load<Texture2D>("NikitaPhillistine");
+            
+            Rectangle sourceRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);
 
             Tower[] towers = 
             {
@@ -91,11 +97,11 @@ namespace TowerDefense
 
             Enemy[] enemys =
             {
-                new Enemy(500, 200, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 5),
-                new Enemy(400, 400, 0.4f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 15),
-                new Enemy(300, 600, Vector2.Zero, Color.White, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25),
-                new Enemy(200, 600, Vector2.Zero, Color.Purple, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25),
-                new Enemy(100, 600, Vector2.Zero, Color.Purple, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25),
+                new Enemy(500, 200, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 5, "Zanlin"),
+                new Enemy(300, 300, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), baldZanlin, 15, "Bald Zanlin"),
+                new Enemy(400, 400, 0.4f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 15, "Big Zanlin"),
+                new Enemy(300, 600, Vector2.Zero, Color.Red, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25, "Red Zanlin"),
+                new Enemy(300, 500, 0.6f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), baldZanlin, 15, "Big Bald Zanlin"),
             };
 
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
@@ -105,8 +111,8 @@ namespace TowerDefense
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32, 10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
                 [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),                
                 [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), enemys, TimeSpan.FromMilliseconds(1250), towers, editorFont, 100, TimeSpan.FromSeconds(20)),
-                [ScreenTypes.GameOver] = new GameOverScreen(titleFont, GraphicsDevice.Viewport, editorFont)
-            };        
+                [ScreenTypes.GameOver] = new GameOverScreen(titleFont, GraphicsDevice.Viewport, statsFont, 25)
+            }; 
 
             screen.Initilize(screens);
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,8 +28,9 @@ namespace TowerDefense
         private PathTile[] rought;
         private int currentPathIndex;
         public int Reward;
+        public string Name;
 
-        public Enemy(int speed, int health, Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Texture2D texture, int reward)
+        public Enemy(int speed, int health, Vector2 position, Color color, float scale, int rotation, Rectangle sourceRectangle, Texture2D texture, int reward, string name)
             : base(position, color, scale, rotation, sourceRectangle, new Vector2(texture.Width * scale / 2, texture.Height * scale / 2), texture)
         {
             Speed = speed;
@@ -36,10 +38,11 @@ namespace TowerDefense
             GridPos = Point.Zero;
             enemyTimer = TimeSpan.Zero;
             Reward = reward;
+            Name = name;
         }
 
-        public Enemy(int speed, int health, float scale, Rectangle sourceRectangle, Texture2D texture, int reward)
-            :this(speed, health, new Vector2(0,0), Color.White, scale, 0, sourceRectangle, texture, reward)
+        public Enemy(int speed, int health, float scale, Rectangle sourceRectangle, Texture2D texture, int reward, string name)
+            :this(speed, health, new Vector2(0,0), Color.White, scale, 0, sourceRectangle, texture, reward, name)
         {
 
         }
@@ -77,9 +80,9 @@ namespace TowerDefense
             List<NodeWrapper> visitedNodes = new List<NodeWrapper>();
             NodeWrapper currentNode = new NodeWrapper((PathTile)Map.Tiles[Map.StartingPoint.X, Map.StartingPoint.Y], 0, null);
             List<NodeWrapper> frontier = new List<NodeWrapper>();
-
             while (currentNode.WrappedNode.GridPos != ((PathTile)Map.Tiles[Map.EndingPoint.X, Map.EndingPoint.Y]).GridPos)
             {
+                currentNode.WrappedNode.Neighbors.Shuffle(new Random());
                 for (int i = 0; i < currentNode.WrappedNode.Neighbors.Length; i++)
                 {
                     float distanceFromStart = currentNode.cumulativeDistance + 1;

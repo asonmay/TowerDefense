@@ -27,25 +27,38 @@ namespace TowerDefense.Screens
     {
         private Button homeButton;
         private SpriteFont gameOverFont;
+        private bool didWin;
         private GameStats stats;
         private SpriteFont statsFont;
+        private int stringOffset;
 
-        public GameOverScreen(SpriteFont gameOverFont, Viewport viewport, SpriteFont statsFont)
+        public GameOverScreen(SpriteFont gameOverFont, Viewport viewport, SpriteFont statsFont, int stringOffset)
         {
             this.gameOverFont = gameOverFont;
             viewPort = viewport;
             this.statsFont = statsFont;
             homeButton = new Button(Color.Green, "Go Home", Point.Zero, statsFont, Color.Black);
+            this.stringOffset = stringOffset;
         }
 
-        public void Init(GameStats stats)
+        public void Init(GameStats stats, bool didWin)
         {
             this.stats = stats;
+            this.didWin = didWin;
         }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
-            var stringSize = gameOverFont.MeasureString("GAME OVER");
-            spriteBatch.DrawString(gameOverFont, "GAME OVER", new Vector2((viewPort.Width / 2) - (stringSize.X / 2), (viewPort.Height / 2) - (stringSize.Y / 2)), Color.White);
+            string text = didWin ? "You Won" : "You Lost";
+            var stringSize = gameOverFont.MeasureString(text);
+            Vector2 pos = new Vector2((viewPort.Width / 2) - (stringSize.X / 2), (viewPort.Height / 2) - (stringSize.Y / 2));
+            spriteBatch.DrawString(gameOverFont, text, pos, Color.White);
+
+            text = $"Enemies Killed: {stats.EnemiesKilled}";
+            stringSize = statsFont.MeasureString($"Enemies Killed: {stats.EnemiesKilled}");
+            pos = new Vector2((viewPort.Width / 2) - (stringSize.X / 2), (viewPort.Height / 2) - (stringSize.Y / 2) + (stringSize.Y + stringOffset));
+            spriteBatch.DrawString(statsFont, text, pos, Color.White);
+
             homeButton.Draw(spriteBatch);
         }
 
