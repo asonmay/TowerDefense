@@ -41,8 +41,12 @@ namespace TowerDefense
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            screen = ScreenManager.Instance;    
+            screen = ScreenManager.Instance;
 
+            string serializedData = File.ReadAllText("SavedMaps.Json");
+            savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
+
+            #region SourceRectangles
             Dictionary<TileTypes, Rectangle> sourceRectangles = new Dictionary<TileTypes, Rectangle>
             {
                 [TileTypes.Grass] = new Rectangle(160, 128, 32, 32),
@@ -58,11 +62,9 @@ namespace TowerDefense
                 [TileTypes.Up] = new Rectangle(64, 128, 32, 32),
                 [TileTypes.Down] = new Rectangle(64, 0, 32, 32),
             };
-
-            string serializedData = File.ReadAllText("SavedMaps.Json");
-            savedMaps = new List<TileMapProfile>((TileMapProfile[])JsonSerializer.Deserialize(serializedData, typeof(TileMapProfile[])));
-
-            Texture2D background = Content.Load<Texture2D>("another zanlin");
+            #endregion
+            #region Content
+            Texture2D background = Content.Load<Texture2D>("zanlindefense");
             Texture2D spriteSheet = Content.Load<Texture2D>("FieldsTileset");
 
             //Fonts
@@ -83,36 +85,42 @@ namespace TowerDefense
             Texture2D hakopCat = Content.Load<Texture2D>("HakopCat");
             Texture2D niketaBall = Content.Load<Texture2D>("NikitaBall");
             Texture2D nekita = Content.Load<Texture2D>("NikitaPhillistine");
-            
-            Rectangle sourceRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);
-
+            Texture2D edin = Content.Load<Texture2D>("Edden");
+            Texture2D gimp = Content.Load<Texture2D>("gimp");
+            #endregion
+            #region Towers
             Tower[] towers = 
             {
-                new ShooterTower(15, 5, wailin, 0.1f, 20, Point.Zero, TimeSpan.FromMilliseconds(200), wailin, new Point(32,32), 0.15f, new Vector2(20,20), 40),
-                new ShooterTower(15, 15, liz, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), liz, new Point(32,32), 0.1f, new Vector2(20,20),25),
-                new ShooterTower(15, 10000, ariana, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(7000), ariana, new Point(32,32), 0.1f, new Vector2(20,20),200),
-                new ShooterTower(15, 25, baldHakop, 0.08f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), hakopCat, new Point(32,32), 0.08f, new Vector2(20,20), 30),
-                new ShooterTower(15, 25, niketaBall, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), nekita, new Point(32,32), 0.025f, new Vector2(20,20), 30),
+                new ShooterTower(10, 3, wailin, 0.1f, 20, Point.Zero, TimeSpan.FromMilliseconds(200), wailin, new Point(32,32), 0.15f, new Vector2(20,20), 50),
+                new TargetTower(50, 10, liz, 0.05f, 30, Point.Zero, TimeSpan.FromMilliseconds(100), liz, new Point(32,32), 0.1f, new Vector2(20,20),50),
+                new ShooterTower(50, 10000, ariana, 0.05f, 40, Point.Zero, TimeSpan.FromMilliseconds(10000), ariana, new Point(32,32), 0.1f, new Vector2(20,20),200),
+                new ShooterTower(10, 45, baldHakop, 0.08f, 20, Point.Zero, TimeSpan.FromMilliseconds(1500), hakopCat, new Point(32,32), 0.08f, new Vector2(20,20), 50),
+                new ShooterTower(10, 30, niketaBall, 0.05f, 20, Point.Zero, TimeSpan.FromMilliseconds(800), nekita, new Point(32,32), 0.025f, new Vector2(20,20), 75),
+                new TargetTower(20, 100, gimp, 0.2f, 20, Point.Zero, TimeSpan.FromMilliseconds(1000), edin, new Point(32,32), 0.06f, new Vector2(20,20), 30),
             };
-
+            #endregion
+            #region Enemies
             Enemy[] enemys =
             {
-                new Enemy(500, 200, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 5, "Zanlin"),
-                new Enemy(300, 300, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), baldZanlin, 15, "Bald Zanlin"),
-                new Enemy(400, 400, 0.4f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 15, "Big Zanlin"),
-                new Enemy(300, 600, Vector2.Zero, Color.Red, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 25, "Red Zanlin"),
-                new Enemy(300, 500, 0.6f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), baldZanlin, 15, "Big Bald Zanlin"),
+                new Enemy(500, 200, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 2, "Zanlin"),
+                new Enemy(300, 400, 0.2f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), baldZanlin, 5, "Bald Zanlin"),
+                new Enemy(400, 400, 0.4f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 5, "Big Zanlin"),
+                new Enemy(300, 600, Vector2.Zero, Color.Red, 0.6f, 0, new Rectangle(0,0, enemyTexture.Width, enemyTexture.Height), enemyTexture, 20, "Red Zanlin"),
+                new Enemy(300, 600, 0.6f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), baldZanlin, 20, "Big Bald Zanlin"),
+                new Enemy(500, 700, 0.6f, new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height), baldZanlin, 25, "Big Bald Zanlin"),
             };
-
+            #endregion;
+            #region Screens
             Dictionary<ScreenTypes, Screen> screens = new Dictionary<ScreenTypes, Screen>
             {
-                [ScreenTypes.HomeScreen] = new HomeScreen(background, new Point(100, 500), new Point(200, 500), Color.Red, Color.Red, buttonFont, background, titleFont, GraphicsDevice.Viewport),
+                [ScreenTypes.HomeScreen] = new HomeScreen(background, new Point(300, 20), new Point(300, 100), Color.Red, Color.Red, buttonFont, background, titleFont, GraphicsDevice.Viewport),
                 [ScreenTypes.MapEditorMenu] = new MapEditorMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, new Point(470, 10), background),
                 [ScreenTypes.MapEditor] = new MapEditor(new Vector2(704, 64), buttonFont, new Point(32, 10), new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), spriteSheet, sourceRectangles, background),
-                [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(200, 10), buttonFont, background),                
+                [ScreenTypes.PlayMenu] = new PlayMenu(spriteSheet, sourceRectangles, new Rectangle(100, 100, 596, 460), Color.WhiteSmoke, new Point(20, 20), new Point(375, 10), buttonFont, background),                
                 [ScreenTypes.Game] = new GameScreen(new TileMapSpecs(new Point(32, 32), spriteSheet, sourceRectangles), enemys, TimeSpan.FromMilliseconds(1250), towers, editorFont, 100, TimeSpan.FromSeconds(20)),
                 [ScreenTypes.GameOver] = new GameOverScreen(titleFont, GraphicsDevice.Viewport, statsFont, 25)
-            }; 
+            };
+            #endregion;
 
             screen.Initilize(screens);
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Timers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,35 +16,31 @@ namespace TowerDefense
     public class GameScreen : Screen
     {
         private Tilemap map;
-        private int money;
-        private Tower[] towers;
-        private List<Enemy> enemies;
         private TileMapSpecs specs;
-        private TimeSpan enemySpawnTimer;
-        private TimeSpan enemySpawnRate;
-        public Enemy[] EnemyQueue;
+        private Point hoverPos;
         private TowerShop towerShop;
-        private SpriteFont font;
+        private Tower[] towers;     
         private Tower selectedTower;
         private List<Tower> currentTowers;
-        private Point hoverPos;
         private int enemyindex;
-        private TimeSpan nextWaveRate;
-        private TimeSpan waveTimer;
+        private Timer enemySpawnTimer;
+        private List<Enemy> enemies;
+        public Enemy[] EnemyQueue;
+        private Timer waveTimer;
+        private SpriteFont font;
         public int EndHealth { get; private set; }
-
         public GameStats stats;
+        private int money;
         public bool DidWin { get; private set; }
 
         public GameScreen(TileMapSpecs specs, Enemy[] startingEnemy, TimeSpan enemySpawnRate, Tower[] towers, SpriteFont font, int endHealth, TimeSpan nextWaveRate)
         {
             this.specs = specs;         
             EnemyQueue = startingEnemy;
-            this.enemySpawnRate = enemySpawnRate;
             this.font = font;
             this.towers = towers;
-            this.nextWaveRate = nextWaveRate;
-            waveTimer = TimeSpan.Zero;
+            waveTimer = new Timer(nextWaveRate);
+            enemySpawnTimer = new Timer(enemySpawnRate);
             DidWin = false;
         }
 
@@ -89,26 +86,32 @@ namespace TowerDefense
             return ScreenTypes.Game;
         }
 
-        public override ScreenTypes Update(GameTime gameTime)
+        private bool UpdateWave(GameTime gameTime)
         {
-            waveTimer += gameTime.ElapsedGameTime;
-            if(waveTimer >= nextWaveRate)
+            if (waveTimer.Update(gameTime))
             {
-                waveTimer = TimeSpan.Zero;
-                if(enemyindex + 1 < EnemyQueue.Length)
+                if (enemyindex + 1 < EnemyQueue.Length)
                 {
                     enemyindex++;
+                    money += 150;
                 }
                 else
                 {
                     DidWin = true;
-                    return ScreenTypes.GameOver;
+                    return true;
                 }
-                enemySpawnRate -= TimeSpan.FromMilliseconds(150);
+            }
+            return false;
+        }
+
+        public override ScreenTypes Update(GameTime gameTime)
+        {
+            if(UpdateWave(gameTime))
+            {
+                return ScreenTypes.GameOver;
             }
 
             hoverPos = GetHovorPos();
-            enemySpawnTimer += gameTime.ElapsedGameTime;
 
             if(EndHealth <= 0)
             {
@@ -116,9 +119,42 @@ namespace TowerDefense
                 return ScreenTypes.GameOver;
             }
 
-            SpawnEnemies();
+            SpawnEnemies(gameTime);
+            UpdateEnemies(gameTime);
+            SetSelectedTower();
 
-            for(int i = 0; i < enemies.Count; i++)
+            for (int i = 0; i < currentTowers.Count; i++)
+            {
+                currentTowers[i].Update(enemies.ToArray(), gameTime);
+            }
+
+            if(Mouse.GetState().LeftButton == ButtonState.Pressed && hoverPos.X < int.MaxValue && selectedTower != null && map.Tiles[hoverPos.X, hoverPos.Y].Type == TileTypes.Grass && !DoesHaveTile(hoverPos))
+            {
+                currentTowers.Add(selectedTower.GetTower(hoverPos, map.Specs.TileSize, map.mapPosition));
+                selectedTower = null;
+            }
+
+            return ReturnType();
+        }
+
+        private void SetSelectedTower()
+        {
+            if (selectedTower == null)
+            {
+                for (int i = 0; i < towerShop.items.Length; i++)
+                {
+                    if (towerShop.items[i].BuyButton.isClicked() && money - towerShop.items[i].DefaultTower.Cost >= 0)
+                    {
+                        selectedTower = towerShop.items[i].DefaultTower;
+                        money -= selectedTower.Cost;
+                    }
+                }
+            }
+        }
+        
+        private void UpdateEnemies(GameTime gameTime)
+        {
+            for (int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].Update(gameTime);
                 if (enemies[i].Health <= 0)
@@ -133,33 +169,8 @@ namespace TowerDefense
                     enemies.Remove(enemies[i]);
                 }
             }
-
-            for(int i = 0; i < currentTowers.Count; i++)
-            {
-                currentTowers[i].Update(enemies.ToArray(), gameTime);
-            }
-
-            if(selectedTower == null)
-            {
-                for (int i = 0; i < towerShop.items.Length; i++)
-                {
-                    if (towerShop.items[i].BuyButton.isClicked() && money - towerShop.items[i].DefaultTower.Cost >= 0)
-                    {
-                        selectedTower = towerShop.items[i].DefaultTower;
-                        money -= selectedTower.Cost;
-                    }
-                }
-            }
-            
-            if(Mouse.GetState().LeftButton == ButtonState.Pressed && hoverPos.X < int.MaxValue && selectedTower != null && map.Tiles[hoverPos.X, hoverPos.Y].Type == TileTypes.Grass && !DoesHaveTile(hoverPos))
-            {
-                currentTowers.Add(selectedTower.GetTower(hoverPos, map.Specs.TileSize, map.mapPosition));
-                selectedTower = null;
-            }
-
-            return ReturnType();
         }
-        
+
         private bool DoesHaveTile(Point pos)
         {
             for(int i = 0; i < currentTowers.Count; i++)
@@ -172,14 +183,13 @@ namespace TowerDefense
             return false;
         }
 
-        private void SpawnEnemies()
+        private void SpawnEnemies(GameTime gameTime)
         {
-            if (enemySpawnTimer >= enemySpawnRate)
+            if (enemySpawnTimer.Update(gameTime))
             {
-                enemies.Add(new Enemy(EnemyQueue[enemyindex].Speed, EnemyQueue[enemyindex].Health, EnemyQueue[enemyindex].Scale, EnemyQueue[enemyindex].SourceRectangle, EnemyQueue[enemyindex].Texture, EnemyQueue[enemyindex].Reward, EnemyQueue[enemyindex].Name));
+                enemies.Add(EnemyQueue[enemyindex].Clone());
                 enemies[enemies.Count - 1].Map = map;
                 enemies[enemies.Count - 1].GridPos = map.StartingPoint;
-                enemySpawnTimer = TimeSpan.Zero;
                 enemies[enemies.Count - 1].GenerateRougt();
                 if (enemyindex >= EnemyQueue.Length)
                 {

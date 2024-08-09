@@ -111,6 +111,18 @@
 /processorParam:TextureFormat=Color
 /build:file.png
 
+#begin gimp.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:gimp.png
+
 #begin HakopCat.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -208,4 +220,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:wallin.png
+
+#begin zanlindefense.webp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:zanlindefense.webp
 

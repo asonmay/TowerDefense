@@ -131,5 +131,10 @@ namespace TowerDefense
                 HasReachedEnd = true;
             }
         }
+
+        public Enemy Clone()
+        {
+            return new Enemy(Speed, Health, Scale, SourceRectangle, Texture, Reward, Name);
+        }
     }
 }

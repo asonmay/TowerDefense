@@ -30,10 +30,8 @@ namespace TowerDefense
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(backgroundTexture, Vector2.Zero, new Rectangle(0,0, backgroundTexture.Width, backgroundTexture.Height), Color.White, 0, Vector2.Zero, new Vector2(1.1f,1), SpriteEffects.None,1);
+            spriteBatch.Draw(backgroundTexture, Vector2.Zero, new Rectangle(0,3, backgroundTexture.Width, backgroundTexture.Height), Color.White, 0, Vector2.Zero, new Vector2(0.8f, 1.2f), SpriteEffects.None,1);
             playButton.Draw(spriteBatch);
-            spriteBatch.DrawString(titleFont, "ZANLIN", new Vector2((viewPort.Width - titleFont.MeasureString("ZANLIN").X) / 2, 5), Color.DimGray);
-            spriteBatch.DrawString(titleFont, "DEFENSE", new Vector2((viewPort.Width - titleFont.MeasureString("DEFENSE").X) / 2, 100 + titleFont.MeasureString("ZANLIN").Y), Color.DimGray);
             mapEditorButton.Draw(spriteBatch);
         }
 
